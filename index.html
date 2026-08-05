@@ -5,6 +5,7 @@
 <meta name="color-scheme" content="light dark">
 <title>The Southerners Cup</title>
 <link rel="stylesheet" href="/site.css">
+<script defer src="/site.js"></script>
 </head><body>
 <header class="masthead">
   <div class="masthead-inner">
@@ -50,33 +51,4 @@
     <a href="/admin/">Commissioner's office</a>
   </footer>
 </main>
-<script>
-(function () {
-  "use strict";
-  var KEY = "cup-theme";
-  function apply(t) {
-    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
-    else document.documentElement.removeAttribute("data-theme");
-  }
-  try { apply(localStorage.getItem(KEY)); } catch (e) {}
-  function currentIsDark() {
-    var set = document.documentElement.getAttribute("data-theme");
-    if (set) return set === "dark";
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-  var btn = document.querySelector("[data-theme-toggle]");
-  if (!btn) return;
-  function label() {
-    btn.textContent = currentIsDark() ? "☀" : "☾";
-    btn.setAttribute("aria-label", "Toggle theme");
-  }
-  label();
-  btn.addEventListener("click", function () {
-    var next = currentIsDark() ? "light" : "dark";
-    apply(next);
-    try { localStorage.setItem(KEY, next); } catch (e) {}
-    label();
-  });
-})();
-</script>
 </body></html>

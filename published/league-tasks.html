@@ -373,6 +373,8 @@ button.primary:hover{background:var(--brand-2)}
   .card,.stat,.table-wrap{box-shadow:none}
 }
 </style>
+<link rel="stylesheet" href="/site.css">
+<script defer src="/site.js"></script>
 </head><body>
 <header class="masthead">
   <div class="masthead-inner">
@@ -429,129 +431,4 @@ button.primary:hover{background:var(--brand-2)}
     <a href="/">All pages →</a>
   </footer>
 </main>
-<script>/* The Southerners Cup — page behaviour. Vanilla, no dependencies, no network. */
-(function () {
-  "use strict";
-
-  /* ---- theme: remember the reader's choice, default to their system ---- */
-  var KEY = "cup-theme";
-  function apply(t) {
-    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
-    else document.documentElement.removeAttribute("data-theme");
-  }
-  try { apply(localStorage.getItem(KEY)); } catch (e) {}
-
-  function currentIsDark() {
-    var set = document.documentElement.getAttribute("data-theme");
-    if (set) return set === "dark";
-    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-  }
-
-  function initTheme() {
-    var btn = document.querySelector("[data-theme-toggle]");
-    if (!btn) return;
-    function label() { btn.textContent = currentIsDark() ? "☀" : "☾"; btn.setAttribute("aria-label", "Toggle theme"); }
-    label();
-    btn.addEventListener("click", function () {
-      var next = currentIsDark() ? "light" : "dark";
-      apply(next);
-      try { localStorage.setItem(KEY, next); } catch (e) {}
-      label();
-    });
-  }
-
-  /* ---- sortable tables: numbers sort as numbers, text as text ---- */
-  function cellValue(row, i) {
-    var td = row.children[i];
-    if (!td) return "";
-    var raw = (td.getAttribute("data-sort") || td.textContent || "").trim();
-    var num = parseFloat(raw.replace(/[$,%\s]/g, "").replace(/^\+/, ""));
-    // Treat "12-4" style records as their win count, not as a subtraction.
-    var rec = raw.match(/^(\d+)\s*-\s*(\d+)/);
-    if (rec) return { n: parseFloat(rec[1]) - parseFloat(rec[2]) * 0.001, s: raw };
-    return isNaN(num) || !/\d/.test(raw) ? { s: raw.toLowerCase() } : { n: num, s: raw };
-  }
-
-  function initTables() {
-    document.querySelectorAll("table").forEach(function (table) {
-      var head = table.tHead;
-      if (!head || !head.rows.length) return;
-      var body = table.tBodies[0];
-      if (!body || body.rows.length < 2) return;
-
-      Array.prototype.forEach.call(head.rows[0].cells, function (th, idx) {
-        th.setAttribute("data-sortable", "");
-        th.setAttribute("tabindex", "0");
-        function sort() {
-          var asc = th.getAttribute("aria-sort") !== "ascending";
-          Array.prototype.forEach.call(head.rows[0].cells, function (o) { o.removeAttribute("aria-sort"); });
-          th.setAttribute("aria-sort", asc ? "ascending" : "descending");
-          var rows = Array.prototype.slice.call(body.rows);
-          rows.sort(function (a, b) {
-            var x = cellValue(a, idx), y = cellValue(b, idx), r;
-            if ("n" in x && "n" in y) r = x.n - y.n;
-            else r = String(x.s).localeCompare(String(y.s), undefined, { numeric: true });
-            return asc ? r : -r;
-          });
-          rows.forEach(function (r) { body.appendChild(r); });
-        }
-        th.addEventListener("click", sort);
-        th.addEventListener("keydown", function (e) {
-          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sort(); }
-        });
-      });
-    });
-  }
-
-  /* ---- colour +/- numbers so trends read at a glance ---- */
-  function initSigns() {
-    document.querySelectorAll("td, .stat .value").forEach(function (el) {
-      if (el.querySelector("*")) return;
-      var t = el.textContent.trim();
-      if (/^[+]\d/.test(t)) el.classList.add("pos");
-      else if (/^[-−]\d/.test(t)) el.classList.add("neg");
-    });
-  }
-
-  /* ---- wrap bare tables so they scroll instead of breaking the layout ---- */
-  function initTableWrap() {
-    document.querySelectorAll("table").forEach(function (t) {
-      if (t.parentElement && t.parentElement.classList.contains("table-wrap")) return;
-      var w = document.createElement("div");
-      w.className = "table-wrap";
-      t.parentNode.insertBefore(w, t);
-      w.appendChild(t);
-    });
-  }
-
-  /* ---- build a contents list for long pages ---- */
-  function initToc() {
-    var host = document.querySelector("[data-toc]");
-    if (!host) return;
-    var hs = document.querySelectorAll(".wrap h2");
-    if (hs.length < 3) { host.remove(); return; }
-    var ol = document.createElement("ol");
-    Array.prototype.forEach.call(hs, function (h, i) {
-      if (!h.id) h.id = "s" + i + "-" + (h.textContent || "").toLowerCase()
-        .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
-      var li = document.createElement("li");
-      var a = document.createElement("a");
-      a.href = "#" + h.id;
-      a.textContent = h.textContent;
-      li.appendChild(a);
-      ol.appendChild(li);
-    });
-    var head = document.createElement("h4");
-    head.textContent = "Contents";
-    host.appendChild(head);
-    host.appendChild(ol);
-  }
-
-  function boot() {
-    initTheme(); initTableWrap(); initTables(); initSigns(); initToc();
-  }
-  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
-  else boot();
-})();
-</script>
 </body></html>
