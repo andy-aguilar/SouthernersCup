@@ -3,11 +3,23 @@ import { useEffect, useMemo, useState } from "react";
 import { JSONUIProvider, Renderer } from "@json-render/react";
 import type { Spec } from "@json-render/react";
 import { registry } from "./json-render/registry";
-import { findPageByPath, pages } from "./mock/content";
 
 const THEME_KEY = "cup-theme";
 const AUTH_KEY = "cup-auth-admin";
 const ADMIN_PASSWORD = "tummysticks";
+
+type Page = {
+  path: string;
+  title: string;
+  spec: Spec;
+};
+
+type PostSummary = {
+  slug: string;
+  title: string;
+  subtitle?: string | null;
+  status: "draft" | "published" | "archived";
+};
 
 function getPath() {
   return window.location.pathname.replace(/\/$/, "") || "/";
@@ -17,9 +29,9 @@ function isAdminPath(path: string) {
   return path === "/admin" || path.startsWith("/admin/");
 }
 
-function apiSlugForPath(path: string) {
-  if (path === "/published/league-history.html") return "league-history";
-  return null;
+function slugForPostPath(path: string) {
+  const match = path.match(/^\/p\/([a-z0-9]+(?:-[a-z0-9]+)*)$/);
+  return match?.[1] ?? null;
 }
 
 function getInitialTheme() {
@@ -35,20 +47,112 @@ function applyTheme(theme: string) {
   document.documentElement.removeAttribute("data-theme");
 }
 
+function spec(root: string, elements: Spec["elements"]): Spec {
+  return { root, elements };
+}
+
+function buildHomePage(posts: PostSummary[]): Page {
+  return {
+    path: "/",
+    title: "The Southerners Cup",
+    spec: spec("home", {
+      home: {
+        type: "PageHeader",
+        props: {
+          kicker: "Commissioner's desk",
+          title: "The Southerners Cup",
+          standfirst:
+            "League history, dynasty documents, and commissioner notes for one long-running fantasy football argument.",
+        },
+        children: ["home-callout", "home-entries"],
+      },
+      "home-callout": {
+        type: "Callout",
+        props: {
+          label: "A new era",
+          tone: "key",
+          body: "Welcome to the next chapter. Published posts below are loaded from the content API and rendered through the JSON block registry.",
+        },
+      },
+      "home-entries": {
+        type: "EntryGrid",
+        props: {
+          label: "Published posts",
+          entries: posts.map((post) => ({
+            title: post.title,
+            meta: post.subtitle ?? "Published article",
+            href: `/p/${post.slug}`,
+          })),
+        },
+      },
+    }),
+  };
+}
+
+function buildAdminPage(): Page {
+  return {
+    path: "/admin",
+    title: "Commissioner's Office",
+    spec: spec("admin", {
+      admin: {
+        type: "PageHeader",
+        props: {
+          kicker: "Private workspace",
+          title: "Commissioner's office",
+          standfirst:
+            "Non-published beta documents live here until we migrate them into real post records.",
+        },
+        children: ["admin-documents"],
+      },
+      "admin-documents": {
+        type: "CardGrid",
+        props: {
+          items: [
+            {
+              label: "Draft",
+              title: "The Record Book",
+              meta: "Not migrated yet",
+              body: "Structured record-table mockup from the JSON Render prototype.",
+            },
+            {
+              label: "Draft",
+              title: "Bot Feature Requests",
+              meta: "Not migrated yet",
+              body: "Mock queue for future renderer blocks requested by the league bot.",
+            },
+          ],
+        },
+      },
+    }),
+  };
+}
+
 export default function App() {
   const [path, setPath] = useState(getPath);
   const [theme, setTheme] = useState(getInitialTheme);
   const [adminUnlocked, setAdminUnlocked] = useState(
     () => sessionStorage.getItem(AUTH_KEY) === "1",
   );
+  const [postIndex, setPostIndex] = useState<PostSummary[]>([]);
   const [remotePost, setRemotePost] = useState<{
     path: string;
     title: string;
     spec: Spec;
   } | null>(null);
+  const [postLoading, setPostLoading] = useState(false);
 
-  const fallbackPage = useMemo(() => findPageByPath(path), [path]);
-  const page = remotePost?.path === path ? remotePost : fallbackPage;
+  const postSlug = slugForPostPath(path);
+  const homePage = useMemo(() => buildHomePage(postIndex), [postIndex]);
+  const adminPage = useMemo(() => buildAdminPage(), []);
+  const page = postSlug
+    ? remotePost?.path === path
+      ? remotePost
+      : null
+    : path === "/"
+      ? homePage
+      : isAdminPath(path)
+        ? adminPage
+        : null;
   const locked = isAdminPath(path) && !adminUnlocked;
 
   useEffect(() => {
@@ -99,15 +203,39 @@ export default function App() {
   }, [page]);
 
   useEffect(() => {
-    const slug = apiSlugForPath(path);
-    if (!slug) {
+    const controller = new AbortController();
+
+    fetch("/api/posts", {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Post index failed: ${response.status}`);
+        return response.json() as Promise<{ posts?: PostSummary[] }>;
+      })
+      .then((payload) => {
+        setPostIndex(payload.posts ?? []);
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setPostIndex([]);
+      });
+
+    return () => controller.abort();
+  }, []);
+
+  useEffect(() => {
+    if (!postSlug) {
       setRemotePost(null);
+      setPostLoading(false);
       return;
     }
 
     const controller = new AbortController();
+    setPostLoading(true);
+    setRemotePost(null);
 
-    fetch(`/api/posts/${slug}`, {
+    fetch(`/api/posts/${postSlug}`, {
       headers: { Accept: "application/json" },
       signal: controller.signal,
     })
@@ -118,20 +246,25 @@ export default function App() {
         }>;
       })
       .then((payload) => {
-        if (!payload.post?.spec) return;
+        if (!payload.post?.spec) {
+          setPostLoading(false);
+          return;
+        }
         setRemotePost({
           path,
-          title: payload.post.title ?? fallbackPage?.title ?? "Published post",
+          title: payload.post.title ?? "Published post",
           spec: payload.post.spec,
         });
+        setPostLoading(false);
       })
       .catch((error) => {
         if (error instanceof DOMException && error.name === "AbortError") return;
         setRemotePost(null);
+        setPostLoading(false);
       });
 
     return () => controller.abort();
-  }, [fallbackPage?.title, path]);
+  }, [path, postSlug]);
 
   useEffect(() => {
     const id = window.setTimeout(() => {
@@ -178,13 +311,20 @@ export default function App() {
           <JSONUIProvider registry={registry}>
             <Renderer spec={page.spec} registry={registry} />
           </JSONUIProvider>
+        ) : postSlug && postLoading ? (
+          <div className="empty">
+            <p className="kicker">Loading post</p>
+            <h1>Fetching the article JSON.</h1>
+            <p className="standfirst">
+              The page shell is live; the post body is coming from the content API.
+            </p>
+          </div>
         ) : (
           <div className="empty">
             <p className="kicker">Missing page</p>
             <h1>Nothing published here yet.</h1>
             <p className="standfirst">
-              This beta only has {pages.length} mock JSON-rendered pages wired
-              up.
+              Published articles now live under /p/:slug.
             </p>
             <a className="button-link primary" href="/">
               Back home

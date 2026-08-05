@@ -11,6 +11,7 @@ type PostRow = {
   id: string;
   slug: string;
   title: string;
+  subtitle: string | null;
   status: "draft" | "published" | "archived";
   catalog_version: string;
   spec_json: string;
@@ -37,6 +38,7 @@ type FeatureRequestRow = {
 type PostInput = {
   slug?: unknown;
   title?: unknown;
+  subtitle?: unknown;
   status?: unknown;
   author?: unknown;
   spec?: unknown;
@@ -77,6 +79,7 @@ function postFromRow(row: PostRow, includeSpec = true) {
     id: row.id,
     slug: row.slug,
     title: row.title,
+    subtitle: row.subtitle,
     status: row.status,
     catalogVersion: row.catalog_version,
     author: row.author,
@@ -135,6 +138,8 @@ function builtInHistoryPost() {
   return {
     slug: "league-history",
     title: page.title,
+    subtitle:
+      "Sixteen seasons, two platforms, nine champions, and one dynasty reset. This is how the league became itself.",
     status: "published" as const,
     author: "seed",
     spec: page.spec,
@@ -191,6 +196,7 @@ async function upsertPost(request: Request, env: Env, slugOverride?: string) {
 
   const slug = String(slugOverride ?? body.slug ?? "").trim();
   const title = String(body.title ?? "").trim();
+  const subtitle = typeof body.subtitle === "string" ? body.subtitle.trim() : null;
   const status = body.status === "published" ? "published" : "draft";
   const author = String(body.author ?? "agent").trim() || "agent";
   const note = typeof body.note === "string" ? body.note : null;
@@ -222,15 +228,16 @@ async function upsertPost(request: Request, env: Env, slugOverride?: string) {
     env.DB.prepare(
       existing
         ? `UPDATE posts
-            SET title = ?, status = ?, catalog_version = ?, spec_json = ?,
+            SET title = ?, subtitle = ?, status = ?, catalog_version = ?, spec_json = ?,
                 author = ?, current_revision = ?, updated_at = ?, published_at = ?
             WHERE id = ?`
         : `INSERT INTO posts
-            (title, status, catalog_version, spec_json, author, current_revision,
+            (title, subtitle, status, catalog_version, spec_json, author, current_revision,
              updated_at, published_at, id, slug)
-            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
+            VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
       title,
+      subtitle,
       status,
       CATALOG_VERSION,
       specJson,
@@ -243,12 +250,13 @@ async function upsertPost(request: Request, env: Env, slugOverride?: string) {
     ),
     env.DB.prepare(
       `INSERT INTO post_revisions
-        (id, post_id, revision, catalog_version, spec_json, created_at, created_by, note)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?)`,
+        (id, post_id, revision, subtitle, catalog_version, spec_json, created_at, created_by, note)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`,
     ).bind(
       crypto.randomUUID(),
       id,
       revision,
+      subtitle,
       CATALOG_VERSION,
       specJson,
       timestamp,
