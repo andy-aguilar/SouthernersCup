@@ -10,13 +10,14 @@ function signedClass(value: string | number) {
 
 export const { registry } = defineRegistry(catalog, {
   components: {
-    PageHeader: ({ props }) => (
+    PageHeader: ({ props, children }) => (
       <header className="article-header">
         <p className="kicker">{props.kicker}</p>
         <h1>{props.title}</h1>
         {props.standfirst ? (
           <p className="standfirst">{props.standfirst}</p>
         ) : null}
+        {children}
       </header>
     ),
     Byline: ({ props }) => (
