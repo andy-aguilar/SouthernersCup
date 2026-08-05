@@ -1,4 +1,5 @@
 import { defineRegistry } from "@json-render/react";
+import type { CSSProperties } from "react";
 import { catalog } from "./catalog";
 
 function signedClass(value: string | number) {
@@ -337,9 +338,8 @@ export const { registry } = defineRegistry(catalog, {
                   className="title-bubble"
                   style={{
                     backgroundColor: row.color,
-                    width: `${2.6 + row.titles * 0.8}rem`,
-                    height: `${2.6 + row.titles * 0.8}rem`,
-                  }}
+                    "--titles": row.titles,
+                  } as CSSProperties}
                   title={`${row.manager}: ${row.titles} title(s), ${row.championshipYears}`}
                 >
                   {row.titles}
