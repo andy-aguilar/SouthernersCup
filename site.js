@@ -4,7 +4,6 @@
   var THEME_KEY = "cup-theme";
   var AUTH_PREFIX = "cup-auth-";
   var PASSWORDS = {
-    general: "honeybadger",
     admin: "tummysticks"
   };
 
@@ -154,8 +153,8 @@
     });
   }
 
-  function gateKind(pathname) {
-    return pathname === "/admin" || pathname.indexOf("/admin/") === 0 ? "admin" : "general";
+  function isAdminPath(pathname) {
+    return pathname === "/admin" || pathname.indexOf("/admin/") === 0;
   }
 
   function isUnlocked(kind) {
@@ -167,12 +166,16 @@
   }
 
   function ensureGate() {
-    injectShellStyles();
     var existing = document.querySelector(".auth-gate");
     if (existing) existing.remove();
 
-    var kind = gateKind(window.location.pathname);
-    if (isUnlocked(kind)) {
+    if (!isAdminPath(window.location.pathname)) {
+      document.body.classList.remove("auth-locked");
+      return;
+    }
+
+    injectShellStyles();
+    if (isUnlocked("admin")) {
       document.body.classList.remove("auth-locked");
       return;
     }
@@ -183,8 +186,8 @@
     gate.innerHTML = [
       '<form class="auth-box" autocomplete="off">',
       '<div class="crest">SC</div>',
-      '<h1>' + (kind === "admin" ? "Commissioner access" : "League access") + '</h1>',
-      '<p>' + (kind === "admin" ? "Enter the admin password to continue." : "Enter the league password to continue.") + '</p>',
+      '<h1>Commissioner access</h1>',
+      '<p>Enter the admin password to continue.</p>',
       '<label for="site-password">Password</label>',
       '<input id="site-password" type="password" autocomplete="current-password">',
       '<button type="submit">Continue</button>',
@@ -198,8 +201,8 @@
     var error = gate.querySelector(".auth-error");
     form.addEventListener("submit", function (event) {
       event.preventDefault();
-      if (input.value === PASSWORDS[kind]) {
-        unlock(kind);
+      if (input.value === PASSWORDS.admin) {
+        unlock("admin");
         gate.remove();
         document.body.classList.remove("auth-locked");
       } else {
