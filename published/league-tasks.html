@@ -1,0 +1,557 @@
+<!doctype html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<meta name="robots" content="noindex,nofollow">
+<title>League Tasks — The Southerners Cup</title>
+<style>/* ==========================================================================
+   The Southerners Cup — editorial design system
+   One stylesheet, used by every published page and by the publisher shell, so
+   the whole site reads as one publication. Purple/gold is deliberate: most of
+   this group follows LSU, and it keeps brand colour clear of the green/red we
+   reserve for good and bad numbers.
+   ========================================================================== */
+
+*,*::before,*::after{box-sizing:border-box}
+
+:root{
+  /* paper + ink */
+  --paper:#FBFAF7;
+  --panel:#FFFFFF;
+  --panel-2:#F4F2ED;
+  --ink:#15171C;
+  --ink-2:#3E444E;
+  --muted:#6B7280;
+  --rule:#E3E0D8;
+
+  /* brand */
+  --brand:#4E1F87;
+  --brand-2:#6D3BB0;
+  --gold:#C8942A;
+  --gold-soft:#F6E9CC;
+
+  /* semantics for numbers */
+  --good:#0F7A52;
+  --bad:#B3261E;
+  --good-bg:#E6F4EE;
+  --bad-bg:#FBEAE8;
+
+  --shadow:0 1px 2px rgba(20,22,28,.06), 0 8px 24px -12px rgba(20,22,28,.18);
+  --radius:14px;
+  --measure:44rem;
+
+  --sans:-apple-system,BlinkMacSystemFont,"Segoe UI",Inter,Roboto,Helvetica,Arial,sans-serif;
+  --serif:"Iowan Old Style","Palatino Linotype",Palatino,Georgia,"Times New Roman",serif;
+  --mono:ui-monospace,SFMono-Regular,"SF Mono",Menlo,Consolas,monospace;
+}
+
+@media (prefers-color-scheme:dark){
+  :root{
+    --paper:#0D0F13;
+    --panel:#15181E;
+    --panel-2:#1C2028;
+    --ink:#ECEEF2;
+    --ink-2:#C3C8D1;
+    --muted:#939BA7;
+    --rule:#272C35;
+    --brand:#B79CE8;
+    --brand-2:#C9B4F0;
+    --gold:#E0B45C;
+    --gold-soft:#2A2318;
+    --good:#4ADE9B;
+    --bad:#FF8A7A;
+    --good-bg:#12271F;
+    --bad-bg:#2A1815;
+    --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+  }
+}
+:root[data-theme="dark"]{
+  --paper:#0D0F13; --panel:#15181E; --panel-2:#1C2028; --ink:#ECEEF2;
+  --ink-2:#C3C8D1; --muted:#939BA7; --rule:#272C35; --brand:#B79CE8;
+  --brand-2:#C9B4F0; --gold:#E0B45C; --gold-soft:#2A2318;
+  --good:#4ADE9B; --bad:#FF8A7A; --good-bg:#12271F; --bad-bg:#2A1815;
+  --shadow:0 1px 2px rgba(0,0,0,.4), 0 10px 30px -14px rgba(0,0,0,.7);
+}
+:root[data-theme="light"]{
+  --paper:#FBFAF7; --panel:#FFFFFF; --panel-2:#F4F2ED; --ink:#15171C;
+  --ink-2:#3E444E; --muted:#6B7280; --rule:#E3E0D8; --brand:#4E1F87;
+  --brand-2:#6D3BB0; --gold:#C8942A; --gold-soft:#F6E9CC;
+  --good:#0F7A52; --bad:#B3261E; --good-bg:#E6F4EE; --bad-bg:#FBEAE8;
+}
+
+html{-webkit-text-size-adjust:100%;scroll-behavior:smooth}
+body{
+  margin:0;background:var(--paper);color:var(--ink);
+  font:17px/1.65 var(--sans);
+  -webkit-font-smoothing:antialiased;
+  padding:env(safe-area-inset-top) env(safe-area-inset-right) env(safe-area-inset-bottom) env(safe-area-inset-left);
+}
+
+/* ---------------------------------------------------------------- masthead */
+.masthead{
+  border-bottom:1px solid var(--rule);
+  background:var(--panel);
+  position:sticky;top:0;z-index:50;
+  backdrop-filter:saturate(1.4) blur(8px);
+}
+.masthead-inner{
+  max-width:var(--measure);margin:0 auto;padding:.7rem 1.15rem;
+  display:flex;align-items:center;gap:.75rem;
+}
+.wordmark{
+  font-weight:800;letter-spacing:-.02em;font-size:.95rem;
+  color:var(--ink);text-decoration:none;display:flex;align-items:center;gap:.5rem;
+}
+.wordmark .cup{
+  display:inline-grid;place-items:center;width:1.45rem;height:1.45rem;border-radius:6px;
+  background:linear-gradient(140deg,var(--brand),var(--brand-2));
+  color:#fff;font-size:.78rem;font-weight:800;
+}
+.masthead .spacer{flex:1}
+.iconbtn{
+  border:1px solid var(--rule);background:var(--panel-2);color:var(--ink-2);
+  width:2rem;height:2rem;border-radius:8px;cursor:pointer;font-size:.9rem;
+  display:grid;place-items:center;padding:0;
+}
+.iconbtn:hover{border-color:var(--brand);color:var(--brand)}
+
+.wrap{max-width:var(--measure);margin:0 auto;padding:2rem 1.15rem 5rem}
+
+/* ------------------------------------------------------------------ header */
+.kicker{
+  font-size:.72rem;font-weight:700;letter-spacing:.14em;text-transform:uppercase;
+  color:var(--brand);margin:0 0 .7rem;display:flex;align-items:center;gap:.5rem;
+}
+.kicker::after{content:"";flex:1;height:1px;background:var(--rule)}
+
+h1{
+  font-size:clamp(2rem,6vw,3.1rem);line-height:1.04;letter-spacing:-.032em;
+  font-weight:820;margin:0 0 .85rem;text-wrap:balance;
+}
+.standfirst{
+  font:400 clamp(1.05rem,2.4vw,1.28rem)/1.5 var(--serif);
+  color:var(--ink-2);margin:0 0 1.4rem;text-wrap:pretty;
+}
+.byline{
+  display:flex;flex-wrap:wrap;gap:.5rem .9rem;align-items:center;
+  font-size:.83rem;color:var(--muted);
+  padding:.8rem 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);
+  margin:0 0 2.2rem;
+}
+.byline .who{font-weight:650;color:var(--ink-2)}
+.byline-item+.byline-item::before{content:"•";opacity:.45;margin-right:.9rem}
+.byline-tags{display:flex;flex-wrap:wrap;gap:.5rem .65rem;align-items:center}
+.byline-tags:not(:empty)::before{content:"•";opacity:.45;margin-right:.25rem}
+
+@media(max-width:520px){
+  .byline{gap:.55rem .75rem}
+  .byline-tags{flex-basis:100%}
+  .byline-tags:not(:empty)::before{display:none}
+}
+
+/* ---------------------------------------------------------------- headings */
+h2{
+  font-size:clamp(1.3rem,3.4vw,1.65rem);line-height:1.2;letter-spacing:-.022em;
+  font-weight:780;margin:2.9rem 0 .9rem;padding-top:1.1rem;
+  border-top:2px solid var(--ink);text-wrap:balance;
+}
+h3{
+  font-size:1.06rem;font-weight:720;letter-spacing:-.01em;
+  margin:1.9rem 0 .5rem;color:var(--ink);
+}
+h4{font-size:.78rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase;
+   color:var(--muted);margin:1.5rem 0 .5rem}
+
+p{margin:0 0 1.1rem;text-wrap:pretty}
+p,li{overflow-wrap:anywhere}
+a{color:var(--brand);text-underline-offset:.16em;text-decoration-thickness:.07em}
+a:hover{color:var(--brand-2)}
+strong{font-weight:700;color:var(--ink)}
+hr{border:0;border-top:1px solid var(--rule);margin:2.6rem 0}
+
+ul,ol{padding-left:1.25rem;margin:0 0 1.2rem}
+li{margin:.35rem 0}
+ul.tight li,ol.tight li{margin:.15rem 0}
+
+/* ------------------------------------------------------------- stat tiles */
+.stats{
+  display:grid;gap:.7rem;margin:1.6rem 0 2rem;
+  grid-template-columns:repeat(auto-fit,minmax(9.5rem,1fr));
+}
+.stat{
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:1rem 1.05rem;box-shadow:var(--shadow);position:relative;overflow:hidden;
+}
+.stat::before{
+  content:"";position:absolute;inset:0 auto 0 0;width:3px;
+  background:linear-gradient(180deg,var(--brand),var(--brand-2));
+}
+.stat .label{
+  font-size:.7rem;font-weight:700;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);margin:0 0 .35rem;
+}
+.stat .value{
+  font-size:1.85rem;line-height:1;font-weight:800;letter-spacing:-.03em;
+  font-variant-numeric:tabular-nums;margin:0;overflow-wrap:normal;word-break:normal;
+}
+.stat .meta{font-size:.8rem;color:var(--muted);margin:.35rem 0 0}
+.stat.good::before{background:var(--good)}
+.stat.bad::before{background:var(--bad)}
+.stat.gold::before{background:var(--gold)}
+
+/* ------------------------------------------------------------------ tables */
+.table-wrap{
+  margin:1.4rem 0 2rem;border:1px solid var(--rule);border-radius:var(--radius);
+  overflow:auto;background:var(--panel);box-shadow:var(--shadow);
+  -webkit-overflow-scrolling:touch;
+}
+table{width:100%;border-collapse:collapse;font-size:.92rem}
+thead th{
+  position:sticky;top:0;z-index:1;background:var(--panel-2);
+  text-align:left;font-size:.71rem;font-weight:750;letter-spacing:.09em;
+  text-transform:uppercase;color:var(--muted);
+  padding:.7rem .85rem;border-bottom:1px solid var(--rule);white-space:nowrap;
+}
+thead th[data-sortable]{cursor:pointer;user-select:none}
+thead th[data-sortable]:hover{color:var(--brand)}
+thead th[data-sortable]::after{content:"⇅";opacity:.3;margin-left:.35rem;font-size:.85em}
+thead th[aria-sort="ascending"]::after{content:"↑";opacity:.9;color:var(--brand)}
+thead th[aria-sort="descending"]::after{content:"↓";opacity:.9;color:var(--brand)}
+tbody td{
+  padding:.62rem .85rem;border-bottom:1px solid var(--rule);
+  font-variant-numeric:tabular-nums;vertical-align:top;
+}
+tbody tr:last-child td{border-bottom:0}
+tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel-2) 45%,transparent)}
+tbody tr:hover{background:color-mix(in srgb,var(--brand) 7%,transparent)}
+td:first-child,th:first-child{font-weight:600}
+.num{text-align:right;font-variant-numeric:tabular-nums}
+.pos{color:var(--good);font-weight:650}
+.neg{color:var(--bad);font-weight:650}
+.rank{color:var(--muted);font-variant-numeric:tabular-nums;width:2.4rem}
+
+/* ------------------------------------------------------------------- cards */
+.card{
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:1.15rem 1.2rem;margin:1.4rem 0;box-shadow:var(--shadow);
+}
+.card > :first-child{margin-top:0}
+.card > :last-child{margin-bottom:0}
+.callout{
+  border-left:3px solid var(--brand);background:var(--panel);
+  border-radius:0 var(--radius) var(--radius) 0;padding:1rem 1.2rem;margin:1.5rem 0;
+}
+.callout.key{border-left-color:var(--gold);background:var(--gold-soft)}
+.callout.good{border-left-color:var(--good);background:var(--good-bg)}
+.callout.bad{border-left-color:var(--bad);background:var(--bad-bg)}
+.callout .card-label{
+  font-size:.7rem;font-weight:750;letter-spacing:.1em;text-transform:uppercase;
+  color:var(--muted);display:block;margin-bottom:.35rem;
+}
+
+blockquote,.pull{
+  margin:2rem 0;padding:0 0 0 1.2rem;border-left:3px solid var(--gold);
+  font:600 clamp(1.1rem,2.6vw,1.35rem)/1.4 var(--serif);
+  color:var(--ink);letter-spacing:-.01em;
+}
+blockquote p:last-child,.pull p:last-child{margin-bottom:0}
+.pull cite{display:block;margin-top:.55rem;font:500 .82rem/1.4 var(--sans);color:var(--muted);font-style:normal}
+
+/* -------------------------------------------------------------- rank lists */
+.ranklist{list-style:none;padding:0;margin:1.4rem 0 2rem;counter-reset:r}
+.ranklist li{
+  counter-increment:r;display:grid;grid-template-columns:2.3rem 1fr;gap:.85rem;
+  padding:.85rem 0;border-bottom:1px solid var(--rule);margin:0;align-items:baseline;
+}
+.ranklist li:last-child{border-bottom:0}
+.ranklist li::before{
+  content:counter(r);font-size:1.15rem;font-weight:800;color:var(--brand);
+  font-variant-numeric:tabular-nums;letter-spacing:-.02em;
+}
+.ranklist .name{font-weight:680;grid-column:2;min-width:0}
+.ranklist .detail{color:var(--muted);font-size:.9rem;display:block;margin-top:.1rem;grid-column:2;min-width:0}
+
+/* ------------------------------------------------------------------- misc */
+.tag{
+  display:inline-block;font-size:.7rem;font-weight:700;letter-spacing:.06em;
+  text-transform:uppercase;padding:.22rem .5rem;border-radius:999px;
+  background:var(--panel-2);color:var(--muted);border:1px solid var(--rule);
+}
+.tag.brand{background:color-mix(in srgb,var(--brand) 12%,transparent);
+  color:var(--brand);border-color:color-mix(in srgb,var(--brand) 30%,transparent)}
+.tag.gold{background:var(--gold-soft);color:var(--gold);border-color:color-mix(in srgb,var(--gold) 35%,transparent)}
+
+code{
+  background:var(--panel-2);border:1px solid var(--rule);border-radius:5px;
+  padding:.1em .36em;font:.87em/1.4 var(--mono);
+}
+pre{
+  background:var(--panel);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:1rem;overflow-x:auto;font:.85rem/1.55 var(--mono);box-shadow:var(--shadow);
+}
+pre code{background:none;border:0;padding:0}
+
+details{
+  border:1px solid var(--rule);border-radius:var(--radius);background:var(--panel);
+  padding:.85rem 1.1rem;margin:1.1rem 0;
+}
+details[open]{box-shadow:var(--shadow)}
+summary{cursor:pointer;font-weight:680;list-style:none;display:flex;align-items:center;gap:.5rem}
+summary::-webkit-details-marker{display:none}
+summary::before{content:"▸";color:var(--brand);transition:transform .15s ease;display:inline-block}
+details[open] summary::before{transform:rotate(90deg)}
+
+.grid-2{display:grid;gap:1rem;grid-template-columns:repeat(auto-fit,minmax(14rem,1fr));margin:1.4rem 0}
+
+@media (max-width:520px){
+  .stats{grid-template-columns:1fr}
+}
+
+/* -------------------------------------------------------------------- toc */
+.toc{
+  background:var(--panel-2);border:1px solid var(--rule);border-radius:var(--radius);
+  padding:1rem 1.15rem;margin:0 0 2.4rem;
+}
+.toc h4{margin:0 0 .5rem}
+.toc ol{margin:0;padding-left:1.15rem;font-size:.92rem}
+.toc li{margin:.25rem 0}
+.toc a{color:var(--ink-2);text-decoration:none}
+.toc a:hover{color:var(--brand);text-decoration:underline}
+
+/* ----------------------------------------------------------------- footer */
+.page-footer{
+  margin-top:3.5rem;padding-top:1.3rem;border-top:2px solid var(--ink);
+  display:flex;flex-wrap:wrap;gap:.6rem 1rem;justify-content:space-between;
+  align-items:center;font-size:.82rem;color:var(--muted);
+}
+.page-footer a{color:var(--muted)}
+.page-footer .sig{font-weight:700;color:var(--ink-2);letter-spacing:-.01em}
+
+/* -------------------------------------------------------------- index page */
+.index-list{display:grid;gap:.85rem;margin:1.6rem 0 0}
+.entry{
+  display:block;text-decoration:none;color:inherit;background:var(--panel);
+  border:1px solid var(--rule);border-radius:var(--radius);padding:1.15rem 1.2rem;
+  box-shadow:var(--shadow);transition:border-color .15s ease, transform .15s ease;
+}
+.entry:hover{border-color:var(--brand);transform:translateY(-1px)}
+.entry .t{font-size:1.12rem;font-weight:730;letter-spacing:-.018em;margin:0 0 .25rem;color:var(--ink)}
+.entry .m{font-size:.82rem;color:var(--muted);margin:0}
+.empty{color:var(--muted);text-align:center;padding:3rem 1rem;
+  border:1px dashed var(--rule);border-radius:var(--radius)}
+
+/* ------------------------------------------------------------------ login */
+.login-shell{min-height:100svh;display:grid;place-items:center;padding:1.15rem}
+.login-card{
+  width:100%;max-width:23rem;background:var(--panel);border:1px solid var(--rule);
+  border-radius:18px;padding:1.9rem 1.6rem;box-shadow:var(--shadow);
+}
+.login-card .crest{
+  width:3rem;height:3rem;border-radius:12px;display:grid;place-items:center;
+  background:linear-gradient(140deg,var(--brand),var(--brand-2));color:#fff;
+  font-weight:800;font-size:1.1rem;margin:0 0 1.1rem;
+}
+.login-card h1{font-size:1.5rem;margin:0 0 .35rem}
+.login-card .sub{color:var(--muted);font-size:.9rem;margin:0 0 1.5rem}
+label{display:block;font-weight:680;margin:0 0 .45rem;font-size:.86rem}
+input[type=password]{
+  width:100%;padding:.8rem .9rem;font-size:1rem;color:var(--ink);font-family:inherit;
+  background:var(--paper);border:1px solid var(--rule);border-radius:10px;
+}
+input[type=password]:focus{outline:2px solid var(--brand);outline-offset:1px;border-color:transparent}
+button.primary{
+  width:100%;margin-top:.9rem;padding:.82rem 1rem;font-size:.98rem;font-weight:700;
+  font-family:inherit;color:#fff;background:var(--brand);border:0;border-radius:10px;cursor:pointer;
+}
+button.primary:hover{background:var(--brand-2)}
+.err{color:var(--bad);font-size:.87rem;margin:.85rem 0 0}
+
+@media print{
+  .masthead,.iconbtn,.toc{display:none}
+  body{background:#fff;color:#000}
+  .card,.stat,.table-wrap{box-shadow:none}
+}
+</style>
+</head><body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="wordmark" href="/"><span class="cup">SC</span> The Southerners Cup</a>
+    <span class="spacer"></span>
+    <button class="iconbtn" data-theme-toggle type="button">☾</button>
+  </div>
+</header>
+<main class="wrap">
+  <p class="kicker">ENGINEERING DESK</p>
+  <h1>League Tasks</h1>
+  <p class="standfirst">The work required to move The Southerners Cup from prototype to a governed, member-ready dynasty league.</p>
+  <div class="byline">
+    <span class="byline-item who">The Commissioner</span>
+    <span class="byline-item">August 4, 2026</span>
+    <span class="byline-tags"><span class="tag brand">Operations</span><span class="tag brand">Living document</span></span>
+  </div>
+  <nav class="toc" data-toc></nav>
+<div class="callout key"><span class="card-label">Working document</span><p>This board records the engineering group&rsquo;s visible next actions. Owners and statuses marked <strong>assumed</strong> are proposals for manager confirmation, not assignments made by the Commissioner.</p></div>
+
+<div class="stats">
+  <div class="stat gold"><p class="label">Open workstreams</p><p class="value">6</p><p class="meta">from the engineering thread</p></div>
+  <div class="stat"><p class="label">Blocked on approval</p><p class="value">2</p><p class="meta">constitution and member email</p></div>
+  <div class="stat good"><p class="label">Engineering home</p><p class="value">This chat</p><p class="meta">current working assumption</p></div>
+</div>
+
+<h2>Task board</h2>
+<div class="card"><span class="card-label">Open · Greg / deployment owner</span><h3>Get Andy deployment access</h3><p>Invite Andy to the Fly.io deployment and source repository with the least privileges needed, then verify deploy and rollback access.</p></div>
+<div class="card"><span class="card-label">In progress · Greg + Andy · assumed</span><h3>Harden and validate the Commissioner</h3><p>Run authorization, prompt-injection, privacy, cron-delivery, API-failure, and recovery checks; record acceptance criteria.</p></div>
+<div class="card"><span class="card-label">Current convention · Greg + Andy</span><h3>Separate engineering from league chat</h3><p>Use this chat for build and administration work. Choose and configure the ordinary league conversation after validation.</p></div>
+<div class="card"><span class="card-label">Draft ready · managers approve</span><h3>Finish the dynasty constitution</h3><p>Resolve the open decisions in the draft, revise it, then conduct formal ratification.</p></div>
+<div class="card"><span class="card-label">Not started · Commissioner drafts</span><h3>Prepare member onboarding</h3><p>Write a short start-here guide covering Sleeper, waivers, trades, lineups, communication, and disputes. Managers review before delivery.</p></div>
+<div class="card"><span class="card-label">Blocked · awaiting manager approval</span><h3>Email the league</h3><p>Send the approved onboarding instructions only after managers approve the text and recipient list.</p></div>
+
+<h2>Suggested order of operations</h2>
+<ol class="ranklist">
+  <li><span class="name">Access</span><span class="detail">Give Andy repository and Fly.io access; confirm permissions and recovery paths.</span></li>
+  <li><span class="name">Validation</span><span class="detail">Close bot security and reliability checks before moving normal league traffic onto it.</span></li>
+  <li><span class="name">Governance</span><span class="detail">Resolve constitution choices and ratify the dynasty rules before the startup draft.</span></li>
+  <li><span class="name">Separation</span><span class="detail">Keep this as engineering; create the ordinary league channel or DM once ready.</span></li>
+  <li><span class="name">Onboarding</span><span class="detail">Draft, approve, then email the member guide.</span></li>
+</ol>
+
+<h2>Definition of done</h2>
+<div class="grid-2">
+  <div class="card"><span class="card-label">Bot readiness</span><p>Both administrators can deploy and recover the service; authorization boundaries and untrusted-input handling pass documented tests; scheduled delivery is verified in the intended chats.</p></div>
+  <div class="card"><span class="card-label">League readiness</span><p>The constitution is ratified, Sleeper matches it, each manager has acknowledged onboarding, and the engineering and league-conversation channels have clear purposes.</p></div>
+</div>
+
+<details><summary>Assumptions requiring confirmation</summary><p>Greg is listed as the likely access grantor because ownership of the repository and Fly.io organization was not visible here. Greg and Andy are listed as joint validation owners because both are administering/training the bot. The Commissioner is proposed as drafter and sender, while managers retain approval authority. No due dates were inferred.</p></details>
+
+  <footer class="page-footer">
+    <span class="sig">The Southerners Cup</span>
+    <a href="/">All pages →</a>
+  </footer>
+</main>
+<script>/* The Southerners Cup — page behaviour. Vanilla, no dependencies, no network. */
+(function () {
+  "use strict";
+
+  /* ---- theme: remember the reader's choice, default to their system ---- */
+  var KEY = "cup-theme";
+  function apply(t) {
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+    else document.documentElement.removeAttribute("data-theme");
+  }
+  try { apply(localStorage.getItem(KEY)); } catch (e) {}
+
+  function currentIsDark() {
+    var set = document.documentElement.getAttribute("data-theme");
+    if (set) return set === "dark";
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+
+  function initTheme() {
+    var btn = document.querySelector("[data-theme-toggle]");
+    if (!btn) return;
+    function label() { btn.textContent = currentIsDark() ? "☀" : "☾"; btn.setAttribute("aria-label", "Toggle theme"); }
+    label();
+    btn.addEventListener("click", function () {
+      var next = currentIsDark() ? "light" : "dark";
+      apply(next);
+      try { localStorage.setItem(KEY, next); } catch (e) {}
+      label();
+    });
+  }
+
+  /* ---- sortable tables: numbers sort as numbers, text as text ---- */
+  function cellValue(row, i) {
+    var td = row.children[i];
+    if (!td) return "";
+    var raw = (td.getAttribute("data-sort") || td.textContent || "").trim();
+    var num = parseFloat(raw.replace(/[$,%\s]/g, "").replace(/^\+/, ""));
+    // Treat "12-4" style records as their win count, not as a subtraction.
+    var rec = raw.match(/^(\d+)\s*-\s*(\d+)/);
+    if (rec) return { n: parseFloat(rec[1]) - parseFloat(rec[2]) * 0.001, s: raw };
+    return isNaN(num) || !/\d/.test(raw) ? { s: raw.toLowerCase() } : { n: num, s: raw };
+  }
+
+  function initTables() {
+    document.querySelectorAll("table").forEach(function (table) {
+      var head = table.tHead;
+      if (!head || !head.rows.length) return;
+      var body = table.tBodies[0];
+      if (!body || body.rows.length < 2) return;
+
+      Array.prototype.forEach.call(head.rows[0].cells, function (th, idx) {
+        th.setAttribute("data-sortable", "");
+        th.setAttribute("tabindex", "0");
+        function sort() {
+          var asc = th.getAttribute("aria-sort") !== "ascending";
+          Array.prototype.forEach.call(head.rows[0].cells, function (o) { o.removeAttribute("aria-sort"); });
+          th.setAttribute("aria-sort", asc ? "ascending" : "descending");
+          var rows = Array.prototype.slice.call(body.rows);
+          rows.sort(function (a, b) {
+            var x = cellValue(a, idx), y = cellValue(b, idx), r;
+            if ("n" in x && "n" in y) r = x.n - y.n;
+            else r = String(x.s).localeCompare(String(y.s), undefined, { numeric: true });
+            return asc ? r : -r;
+          });
+          rows.forEach(function (r) { body.appendChild(r); });
+        }
+        th.addEventListener("click", sort);
+        th.addEventListener("keydown", function (e) {
+          if (e.key === "Enter" || e.key === " ") { e.preventDefault(); sort(); }
+        });
+      });
+    });
+  }
+
+  /* ---- colour +/- numbers so trends read at a glance ---- */
+  function initSigns() {
+    document.querySelectorAll("td, .stat .value").forEach(function (el) {
+      if (el.querySelector("*")) return;
+      var t = el.textContent.trim();
+      if (/^[+]\d/.test(t)) el.classList.add("pos");
+      else if (/^[-−]\d/.test(t)) el.classList.add("neg");
+    });
+  }
+
+  /* ---- wrap bare tables so they scroll instead of breaking the layout ---- */
+  function initTableWrap() {
+    document.querySelectorAll("table").forEach(function (t) {
+      if (t.parentElement && t.parentElement.classList.contains("table-wrap")) return;
+      var w = document.createElement("div");
+      w.className = "table-wrap";
+      t.parentNode.insertBefore(w, t);
+      w.appendChild(t);
+    });
+  }
+
+  /* ---- build a contents list for long pages ---- */
+  function initToc() {
+    var host = document.querySelector("[data-toc]");
+    if (!host) return;
+    var hs = document.querySelectorAll(".wrap h2");
+    if (hs.length < 3) { host.remove(); return; }
+    var ol = document.createElement("ol");
+    Array.prototype.forEach.call(hs, function (h, i) {
+      if (!h.id) h.id = "s" + i + "-" + (h.textContent || "").toLowerCase()
+        .replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "").slice(0, 40);
+      var li = document.createElement("li");
+      var a = document.createElement("a");
+      a.href = "#" + h.id;
+      a.textContent = h.textContent;
+      li.appendChild(a);
+      ol.appendChild(li);
+    });
+    var head = document.createElement("h4");
+    head.textContent = "Contents";
+    host.appendChild(head);
+    host.appendChild(ol);
+  }
+
+  function boot() {
+    initTheme(); initTableWrap(); initTables(); initSigns(); initToc();
+  }
+  if (document.readyState === "loading") document.addEventListener("DOMContentLoaded", boot);
+  else boot();
+})();
+</script>
+</body></html>
