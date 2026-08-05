@@ -1,6 +1,6 @@
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
-import { Renderer } from "@json-render/react";
+import { JSONUIProvider, Renderer } from "@json-render/react";
 import { registry } from "./json-render/registry";
 import { findPageByPath, pages } from "./mock/content";
 
@@ -121,7 +121,9 @@ export default function App() {
 
       <main className={locked ? "wrap locked-wrap" : "wrap"}>
         {page ? (
-          <Renderer spec={page.spec} registry={registry} />
+          <JSONUIProvider registry={registry}>
+            <Renderer spec={page.spec} registry={registry} />
+          </JSONUIProvider>
         ) : (
           <div className="empty">
             <p className="kicker">Missing page</p>
