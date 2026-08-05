@@ -1,5 +1,6 @@
 import { defineRegistry } from "@json-render/react";
 import type { CSSProperties } from "react";
+import { useMemo, useState } from "react";
 import { catalog } from "./catalog";
 
 function signedClass(value: string | number) {
@@ -11,42 +12,136 @@ function signedClass(value: string | number) {
 
 type NativeTable = {
   columns: string[];
-  rows: string[][];
+  rows: TableCell[][];
 };
+
+type RichTableCell = {
+  title: string;
+  description?: string;
+};
+
+type TableCell = string | RichTableCell;
+
+function cellText(cell: TableCell) {
+  return typeof cell === "string"
+    ? cell
+    : [cell.title, cell.description].filter(Boolean).join(" ");
+}
+
+function sortKey(cell: TableCell) {
+  const text = cellText(cell).trim();
+  const numeric = Number(text.replace(/,/g, ""));
+
+  return Number.isFinite(numeric) ? numeric : text.toLowerCase();
+}
 
 function TableView({
   className,
+  sortable = false,
   table,
 }: {
   className?: string;
+  sortable?: boolean;
   table: NativeTable;
 }) {
+  const [sortState, setSortState] = useState<{
+    column: number;
+    direction: "asc" | "desc";
+  } | null>(null);
+
+  const rows = useMemo(() => {
+    if (!sortState) return table.rows;
+
+    return [...table.rows].sort((a, b) => {
+      const aValue = sortKey(a[sortState.column]);
+      const bValue = sortKey(b[sortState.column]);
+      const comparison =
+        typeof aValue === "number" && typeof bValue === "number"
+          ? aValue - bValue
+          : String(aValue).localeCompare(String(bValue), undefined, {
+              numeric: true,
+            });
+
+      return sortState.direction === "asc" ? comparison : -comparison;
+    });
+  }, [sortState, table.rows]);
+
+  function changeSort(column: number) {
+    setSortState((current) => {
+      if (current?.column !== column) return { column, direction: "asc" };
+      if (current.direction === "asc") return { column, direction: "desc" };
+      return null;
+    });
+  }
+
   return (
     <div className="table-wrap">
       <table className={className}>
         <thead>
           <tr>
             {table.columns.map((column, index) => (
-              <th className={index > 1 ? "num" : undefined} key={column}>
-                {column}
+              <th
+                aria-sort={
+                  sortState?.column === index
+                    ? sortState.direction === "asc"
+                      ? "ascending"
+                      : "descending"
+                    : undefined
+                }
+                className={index > 1 ? "num" : undefined}
+                key={column}
+              >
+                {sortable ? (
+                  <button
+                    className="sort-button"
+                    onClick={() => changeSort(index)}
+                    type="button"
+                  >
+                    <span>{column}</span>
+                    <span
+                      className={[
+                        "sort-arrows",
+                        sortState?.column === index
+                          ? `is-${sortState.direction}`
+                          : "",
+                      ]
+                        .join(" ")
+                        .trim()}
+                      aria-hidden="true"
+                    >
+                      <span className="sort-arrow sort-arrow-up" />
+                      <span className="sort-arrow sort-arrow-down" />
+                    </span>
+                  </button>
+                ) : (
+                  column
+                )}
               </th>
             ))}
           </tr>
         </thead>
         <tbody>
-          {table.rows.map((row, rowIndex) => (
+          {rows.map((row, rowIndex) => (
             <tr key={rowIndex}>
               {row.map((cell, cellIndex) => (
                 <td
                   className={[
                     cellIndex > 1 ? "num" : "",
-                    signedClass(cell) ?? "",
+                    typeof cell !== "string" ? "manager-cell" : "",
+                    signedClass(cellText(cell)) ?? "",
                   ]
                     .join(" ")
                     .trim()}
                   key={`${rowIndex}-${cellIndex}`}
                 >
-                  {cell}
+                  {typeof cell === "string" ? (
+                    cell
+                  ) : (
+                    <>
+                      <strong>{cell.title}</strong>
+                      {cell.description ? <small>{cell.description}</small> : null}
+                    </>
+                  )}
                 </td>
               ))}
             </tr>
@@ -400,6 +495,7 @@ export const { registry } = defineRegistry(catalog, {
           </p>
           <TableView
             className="career-ledger"
+            sortable
             table={{
               columns: [
                 "Manager",
@@ -411,7 +507,7 @@ export const { registry } = defineRegistry(catalog, {
                 "Championship years",
               ],
               rows: props.careerRows.map((row) => [
-                `${row.manager} / ${row.handle}`,
+                { title: row.manager, description: row.handle },
                 row.seasons,
                 row.record,
                 row.winPct,

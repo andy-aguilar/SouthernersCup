@@ -296,6 +296,46 @@ thead th{
   border-bottom:1px solid var(--rule);
   white-space:nowrap;
 }
+.sort-button{
+  appearance:none;
+  border:0;
+  background:transparent;
+  color:inherit;
+  display:inline-flex;
+  align-items:center;
+  justify-content:flex-start;
+  gap:.32rem;
+  padding:0;
+  cursor:pointer;
+  font:inherit;
+  letter-spacing:inherit;
+  text-transform:inherit;
+}
+.num .sort-button{justify-content:flex-end}
+.sort-button:hover,
+.sort-button:focus-visible{color:var(--ink)}
+.sort-button:focus-visible{
+  outline:2px solid var(--brand);
+  outline-offset:.18rem;
+  border-radius:4px;
+}
+.sort-arrows{
+  display:inline-grid;
+  gap:.08rem;
+  opacity:.55;
+}
+.sort-arrow{
+  width:0;
+  height:0;
+  border-left:.18rem solid transparent;
+  border-right:.18rem solid transparent;
+}
+.sort-arrow-up{border-bottom:.24rem solid currentColor}
+.sort-arrow-down{border-top:.24rem solid currentColor}
+.sort-arrows.is-asc .sort-arrow-up,
+.sort-arrows.is-desc .sort-arrow-down{opacity:1}
+.sort-arrows.is-asc .sort-arrow-down,
+.sort-arrows.is-desc .sort-arrow-up{opacity:.22}
 tbody td{
   padding:.62rem .85rem;
   border-bottom:1px solid var(--rule);
@@ -306,6 +346,20 @@ tbody tr:last-child td{border-bottom:0}
 tbody tr:nth-child(even){background:color-mix(in srgb,var(--panel-2) 45%,transparent)}
 tbody tr:hover{background:color-mix(in srgb,var(--brand) 7%,transparent)}
 td:first-child,th:first-child{font-weight:600}
+.manager-cell strong,
+.manager-cell small{display:block}
+.manager-cell strong{
+  color:var(--ink);
+  font-weight:750;
+  line-height:1.25;
+}
+.manager-cell small{
+  margin-top:.2rem;
+  color:var(--ink-2);
+  font-size:.76rem;
+  font-weight:650;
+  line-height:1.25;
+}
 .num{text-align:right;font-variant-numeric:tabular-nums}
 .pos{color:var(--good);font-weight:650}
 .neg{color:var(--bad);font-weight:650}
