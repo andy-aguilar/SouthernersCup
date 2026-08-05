@@ -246,7 +246,7 @@ blockquote p:last-child,.pull p:last-child{margin-bottom:0}
 /* -------------------------------------------------------------- rank lists */
 .ranklist{list-style:none;padding:0;margin:1.4rem 0 2rem;counter-reset:r}
 .ranklist li{
-  counter-increment:r;display:grid;grid-template-columns:2.3rem 1fr;gap:.85rem;
+  counter-increment:r;display:grid;grid-template-columns:2.3rem minmax(0,1fr);gap:.85rem;
   padding:.85rem 0;border-bottom:1px solid var(--rule);margin:0;align-items:baseline;
 }
 .ranklist li:last-child{border-bottom:0}
@@ -254,8 +254,11 @@ blockquote p:last-child,.pull p:last-child{margin-bottom:0}
   content:counter(r);font-size:1.15rem;font-weight:800;color:var(--brand);
   font-variant-numeric:tabular-nums;letter-spacing:-.02em;
 }
-.ranklist .name{font-weight:680}
-.ranklist .detail{color:var(--muted);font-size:.9rem;display:block;margin-top:.1rem}
+.ranklist .name{grid-column:2;font-weight:680;overflow-wrap:normal}
+.ranklist .detail{
+  grid-column:2;color:var(--muted);font-size:.9rem;display:block;margin-top:.1rem;
+  overflow-wrap:normal;
+}
 
 /* ------------------------------------------------------------------- misc */
 .tag{
