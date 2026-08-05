@@ -107,7 +107,7 @@ export const pages: Page[] = [
         type: "ComparisonFrames",
         props: {
           nativeUrl: "/published/league-history.html?native-history=1",
-          legacyUrl: "https://southernerscup.com/published/league-history.html",
+          legacyUrl: "https://southernerscup.com/published/league-history",
         },
       },
     }),
