@@ -1,5 +1,5 @@
 import type { Spec } from "@json-render/react";
-import { legacyHistoryHtml } from "./legacyHistoryHtml";
+import { historyArticleContent } from "./historyArticle";
 
 type Page = {
   path: string;
@@ -79,10 +79,8 @@ export const pages: Page[] = [
     title: "The Southerners Cup: A History",
     spec: spec("history", {
       history: {
-        type: "LegacyHtml",
-        props: {
-          html: legacyHistoryHtml,
-        },
+        type: "HistoryArticle",
+        props: historyArticleContent,
       },
     }),
   },

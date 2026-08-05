@@ -22,6 +22,10 @@ const tableColumn = z.object({
 });
 
 const tableRow = z.record(z.string(), z.union([z.string(), z.number()]));
+const historyTable = z.object({
+  columns: z.array(z.string()),
+  rows: z.array(z.array(z.string())),
+});
 
 export const catalog = defineCatalog(schema, {
   components: {
@@ -118,12 +122,77 @@ export const catalog = defineCatalog(schema, {
       }),
       description: "Bot-authored request for a future renderer block.",
     },
-    LegacyHtml: {
+    HistoryArticle: {
       props: z.object({
-        html: z.string(),
+        header: z.object({
+          kicker: z.string(),
+          title: z.string(),
+          standfirst: z.string(),
+          byline: z.object({
+            author: z.string(),
+            date: z.string(),
+            tags: z.array(z.string()),
+          }),
+        }),
+        stats: z.array(statItem),
+        intro: z.string(),
+        eras: z.array(
+          z.object({
+            years: z.string(),
+            title: z.string(),
+            body: z.string(),
+          }),
+        ),
+        championships: z.array(
+          z.object({
+            season: z.string(),
+            champion: z.string(),
+            runnerUp: z.string(),
+            platform: z.string(),
+            color: z.string(),
+            initials: z.string(),
+          }),
+        ),
+        careerRows: z.array(
+          z.object({
+            manager: z.string(),
+            handle: z.string(),
+            seasons: z.string(),
+            record: z.string(),
+            winPct: z.string(),
+            pointsFor: z.string(),
+            titles: z.number(),
+            championshipYears: z.string(),
+            wins: z.number(),
+            color: z.string(),
+          }),
+        ),
+        notablePeople: z.array(
+          z.object({
+            title: z.string(),
+            body: z.string(),
+          }),
+        ),
+        seasons: z.array(
+          z.object({
+            id: z.string(),
+            summary: z.string(),
+            overview: z.string(),
+            standings: historyTable,
+          }),
+        ),
+        alumni: z.array(
+          z.object({
+            name: z.string(),
+            record: z.string(),
+            teams: z.string(),
+          }),
+        ),
+        identityNote: z.string(),
+        methodology: z.string(),
       }),
       description:
-        "Migration-only renderer for legacy article HTML stored inside JSON content.",
+        "Native structured renderer for the Southerners Cup history article.",
     },
   },
   actions: {},
