@@ -383,11 +383,11 @@ export const { registry } = defineRegistry(catalog, {
                     className="career-fill"
                     style={{
                       backgroundColor: row.color,
-                      width: `${(row.wins / maxWins) * 100}%`,
-                    }}
+                      "--wins-pct": `${(row.wins / maxWins) * 94}%`,
+                    } as CSSProperties}
                   />
+                  <span className="career-wins">{row.wins}</span>
                 </span>
-                <span className="career-wins">{row.wins}</span>
               </div>
             ))}
           </section>
