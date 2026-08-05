@@ -485,6 +485,7 @@ td:first-child,th:first-child{font-weight:600}
   position:relative;
   z-index:1;
   width:var(--timeline-column-size);
+  min-height:calc(var(--timeline-dot-size) + 1.75rem);
   outline-offset:.25rem;
 }
 .timeline-node:hover .timeline-dot,
@@ -492,7 +493,7 @@ td:first-child,th:first-child{font-weight:600}
 .timeline-dot{
   width:var(--timeline-dot-size);
   height:var(--timeline-dot-size);
-  border:3px solid var(--panel);
+  border:1.5px solid var(--panel);
   border-radius:999px;
   color:#fff;
   display:grid;
@@ -504,14 +505,17 @@ td:first-child,th:first-child{font-weight:600}
   transition:transform .15s ease,filter .15s ease;
 }
 .timeline-year{
-  width:var(--timeline-dot-size);
+  position:absolute;
+  left:50%;
+  top:calc(var(--timeline-dot-size) + .26rem);
+  width:2.4rem;
   text-align:center;
   font-size:.72rem;
   color:var(--ink-2);
-  transform:rotate(55deg);
+  transform:translateX(-50%) rotate(55deg);
   transform-origin:50% 0;
-  margin-top:.15rem;
   font-variant-numeric:tabular-nums;
+  line-height:1;
 }
 .timeline-popover{
   position:absolute;
