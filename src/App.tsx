@@ -1,6 +1,7 @@
 import { Moon, Sun } from "lucide-react";
 import { useEffect, useMemo, useState } from "react";
 import { JSONUIProvider, Renderer } from "@json-render/react";
+import type { Spec } from "@json-render/react";
 import { registry } from "./json-render/registry";
 import { findPageByPath, pages } from "./mock/content";
 
@@ -14,6 +15,11 @@ function getPath() {
 
 function isAdminPath(path: string) {
   return path === "/admin" || path.startsWith("/admin/");
+}
+
+function apiSlugForPath(path: string) {
+  if (path === "/published/league-history.html") return "league-history";
+  return null;
 }
 
 function getInitialTheme() {
@@ -35,8 +41,14 @@ export default function App() {
   const [adminUnlocked, setAdminUnlocked] = useState(
     () => sessionStorage.getItem(AUTH_KEY) === "1",
   );
+  const [remotePost, setRemotePost] = useState<{
+    path: string;
+    title: string;
+    spec: Spec;
+  } | null>(null);
 
-  const page = useMemo(() => findPageByPath(path), [path]);
+  const fallbackPage = useMemo(() => findPageByPath(path), [path]);
+  const page = remotePost?.path === path ? remotePost : fallbackPage;
   const locked = isAdminPath(path) && !adminUnlocked;
 
   useEffect(() => {
@@ -85,6 +97,41 @@ export default function App() {
       ? `${page.title} - The Southerners Cup`
       : "The Southerners Cup";
   }, [page]);
+
+  useEffect(() => {
+    const slug = apiSlugForPath(path);
+    if (!slug) {
+      setRemotePost(null);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetch(`/api/posts/${slug}`, {
+      headers: { Accept: "application/json" },
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Post request failed: ${response.status}`);
+        return response.json() as Promise<{
+          post?: { title?: string; spec?: Spec };
+        }>;
+      })
+      .then((payload) => {
+        if (!payload.post?.spec) return;
+        setRemotePost({
+          path,
+          title: payload.post.title ?? fallbackPage?.title ?? "Published post",
+          spec: payload.post.spec,
+        });
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setRemotePost(null);
+      });
+
+    return () => controller.abort();
+  }, [fallbackPage?.title, path]);
 
   useEffect(() => {
     const id = window.setTimeout(() => {
