@@ -25,6 +25,19 @@ function getPath() {
   return window.location.pathname.replace(/\/$/, "") || "/";
 }
 
+function normalizePath(pathname: string) {
+  return pathname.replace(/\/$/, "") || "/";
+}
+
+function scrollToHash(hash: string, behavior: ScrollBehavior = "smooth") {
+  if (!hash) return false;
+  const id = decodeURIComponent(hash.slice(1));
+  const target = document.getElementById(id);
+  if (!target) return false;
+  target.scrollIntoView({ block: "start", behavior });
+  return true;
+}
+
 function isAdminPath(path: string) {
   return path === "/admin" || path.startsWith("/admin/");
 }
@@ -179,9 +192,17 @@ export default function App() {
         return;
       }
       event.preventDefault();
-      window.history.pushState({}, "", url.pathname);
-      setPath(getPath());
-      window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      const nextPath = normalizePath(url.pathname);
+      window.history.pushState({}, "", `${url.pathname}${url.search}${url.hash}`);
+      setPath(nextPath);
+
+      if (url.hash) {
+        window.requestAnimationFrame(() => {
+          scrollToHash(url.hash);
+        });
+      } else {
+        window.scrollTo({ top: 0, left: 0, behavior: "instant" });
+      }
     }
 
     function onPopState() {
@@ -201,6 +222,16 @@ export default function App() {
       ? `${page.title} - The Southerners Cup`
       : "The Southerners Cup";
   }, [page]);
+
+  useEffect(() => {
+    if (!page || locked || !window.location.hash) return;
+
+    const frame = window.requestAnimationFrame(() => {
+      scrollToHash(window.location.hash, "instant");
+    });
+
+    return () => window.cancelAnimationFrame(frame);
+  }, [locked, page]);
 
   useEffect(() => {
     const controller = new AbortController();

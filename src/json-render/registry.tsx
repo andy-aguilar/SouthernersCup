@@ -273,9 +273,13 @@ export const { registry } = defineRegistry(catalog, {
     ),
     SectionHeading: ({ props }) =>
       props.level === "h3" ? (
-        <h3 id={props.id}>{props.title}</h3>
+        <h3 id={props.id} data-slug={props.id}>
+          {props.title}
+        </h3>
       ) : (
-        <h2 id={props.id}>{props.title}</h2>
+        <h2 id={props.id} data-slug={props.id}>
+          {props.title}
+        </h2>
       ),
     Section: ({ props, children }) => {
       const Heading = props.level === "h3" ? "h3" : "h2";
@@ -284,6 +288,8 @@ export const { registry } = defineRegistry(catalog, {
         <section
           className={props.layout ? `section section-${props.layout}` : "section"}
           id={props.id}
+          data-block="section"
+          data-slug={props.id}
         >
           {props.kicker ? <p className="section-label">{props.kicker}</p> : null}
           {props.title ? <Heading>{props.title}</Heading> : null}
