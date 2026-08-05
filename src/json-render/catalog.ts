@@ -194,6 +194,13 @@ export const catalog = defineCatalog(schema, {
       description:
         "Native structured renderer for the Southerners Cup history article.",
     },
+    ComparisonFrames: {
+      props: z.object({
+        nativeUrl: z.string(),
+        legacyUrl: z.string(),
+      }),
+      description: "Side-by-side article comparison frame for migration QA.",
+    },
   },
   actions: {},
 });

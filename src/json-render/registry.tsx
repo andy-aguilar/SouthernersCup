@@ -472,5 +472,32 @@ export const { registry } = defineRegistry(catalog, {
         </article>
       );
     },
+    ComparisonFrames: ({ props }) => (
+      <section className="comparison-page">
+        <div className="comparison-toolbar">
+          <a href={props.nativeUrl}>Open native beta</a>
+          <a href={props.legacyUrl}>Open legacy production</a>
+        </div>
+        <div className="comparison-grid">
+          <section className="comparison-pane">
+            <div className="comparison-label">
+              <span>Native JSON Render beta</span>
+              <code>data-block="history-article"</code>
+            </div>
+            <iframe
+              src={props.nativeUrl}
+              title="Native JSON Render history article"
+            />
+          </section>
+          <section className="comparison-pane">
+            <div className="comparison-label">
+              <span>Legacy production article</span>
+              <code>static HTML</code>
+            </div>
+            <iframe src={props.legacyUrl} title="Legacy history article" />
+          </section>
+        </div>
+      </section>
+    ),
   },
 });

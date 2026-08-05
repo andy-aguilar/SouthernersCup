@@ -65,9 +65,14 @@ export const pages: Page[] = [
           label: "Public archive",
           entries: [
             {
-              title: "The Southerners Cup: A History",
-              meta: "Sixteen seasons. Two platforms. One long argument.",
+              title: "Native History Article",
+              meta: "The converted JSON Render version.",
               href: "/published/league-history.html",
+            },
+            {
+              title: "History Migration Compare",
+              meta: "Native beta and legacy production side by side.",
+              href: "/published/league-history-compare.html",
             },
           ],
         },
@@ -81,6 +86,29 @@ export const pages: Page[] = [
       history: {
         type: "HistoryArticle",
         props: historyArticleContent,
+      },
+    }),
+  },
+  {
+    path: "/published/league-history-compare.html",
+    title: "History Migration Compare",
+    spec: spec("history-compare", {
+      "history-compare": {
+        type: "PageHeader",
+        props: {
+          kicker: "Migration QA",
+          title: "History Migration Compare",
+          standfirst:
+            "Native JSON Render beta on the left, current production legacy article on the right.",
+        },
+        children: ["history-compare-frames"],
+      },
+      "history-compare-frames": {
+        type: "ComparisonFrames",
+        props: {
+          nativeUrl: "/published/league-history.html?native-history=1",
+          legacyUrl: "https://southernerscup.com/published/league-history.html",
+        },
       },
     }),
   },
@@ -117,6 +145,11 @@ export const pages: Page[] = [
               title: "Public History Article",
               meta: "Published page rendered through the beta JSON pipeline.",
               href: "/published/league-history.html",
+            },
+            {
+              title: "History Migration Compare",
+              meta: "Native beta and legacy production side by side.",
+              href: "/published/league-history-compare.html",
             },
           ],
         },
