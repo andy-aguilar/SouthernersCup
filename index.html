@@ -1,7 +1,82 @@
 <!doctype html>
-<html lang="en"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="color-scheme" content="light dark"><title>The Southerners Cup</title><link rel="stylesheet" href="/site.css"></head>
-<body><header class="masthead"><div class="masthead-inner"><a class="wordmark" href="/"><span class="cup">SC</span>The Southerners Cup</a></div></header>
-<main class="wrap"><p class="kicker">Commissioner&rsquo;s desk</p><h1>The Southerners Cup</h1><p class="standfirst">Recaps, rankings, rulings and the record book, written and maintained by the league commissioner.</p>
-<section class="welcome" aria-labelledby="new-era"><p class="label" id="new-era">A new era</p><p>Welcome to the next chapter of The Southerners Cup. As the league moves into its dynasty era, take a stroll through the seasons, champions, grudges and beautifully terrible decisions that brought us here.</p></section>
-<div class="index-list"><a class="entry" href="/published/league-history.html"><p class="title">The Southerners Cup: A History</p><p class="meta">Sixteen seasons. Two platforms. One long argument.</p></a></div>
-<footer><span>The Southerners Cup</span><a href="/admin/">Commissioner&rsquo;s office</a></footer></main></body></html>
+<html lang="en"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="color-scheme" content="light dark">
+<title>The Southerners Cup</title>
+<link rel="stylesheet" href="/site.css">
+</head><body>
+<header class="masthead">
+  <div class="masthead-inner">
+    <a class="wordmark" href="/"><span class="cup">SC</span> The Southerners Cup</a>
+    <span class="spacer"></span>
+    <button class="iconbtn" data-theme-toggle type="button">☾</button>
+  </div>
+</header>
+<main class="wrap">
+  <section class="home-hero" aria-labelledby="home-title">
+    <p class="kicker">Commissioner's desk</p>
+    <h1 id="home-title">The Southerners Cup</h1>
+    <p class="standfirst">League history, record books, dynasty documents, and commissioner notes for one long-running fantasy football argument.</p>
+    <div class="stats">
+      <div class="stat gold"><p class="label">Archive</p><p class="value">16</p><p class="meta">seasons of grudges</p></div>
+      <div class="stat"><p class="label">Era</p><p class="value">Dynasty</p><p class="meta">new rules, old beef</p></div>
+      <div class="stat good"><p class="label">Status</p><p class="value">Live</p><p class="meta">commissioner maintained</p></div>
+    </div>
+    <div class="callout key">
+      <span class="card-label">A new era</span>
+      <p>Welcome to the next chapter. As the league moves into dynasty, this archive keeps the champions, records, rivalries, rulings, and bad decisions in one place.</p>
+    </div>
+    <div class="home-actions">
+      <a class="button-link primary" href="/published/league-history.html">Read the history</a>
+      <a class="button-link" href="/published/record-book.html">Open the record book</a>
+    </div>
+  </section>
+
+  <p class="section-label">Public archive</p>
+  <div class="entry-grid">
+    <a class="entry" href="/published/league-history.html">
+      <p class="t">The Southerners Cup: A History</p>
+      <p class="m">Sixteen seasons. Two platforms. One long argument.</p>
+    </a>
+    <a class="entry" href="/published/record-book.html">
+      <p class="t">The Record Book</p>
+      <p class="m">Champions, career records, all-play, luck, and rivalry ledgers.</p>
+    </a>
+  </div>
+
+  <footer class="page-footer">
+    <span class="sig">The Southerners Cup</span>
+    <a href="/admin/">Commissioner's office</a>
+  </footer>
+</main>
+<script>
+(function () {
+  "use strict";
+  var KEY = "cup-theme";
+  function apply(t) {
+    if (t === "light" || t === "dark") document.documentElement.setAttribute("data-theme", t);
+    else document.documentElement.removeAttribute("data-theme");
+  }
+  try { apply(localStorage.getItem(KEY)); } catch (e) {}
+  function currentIsDark() {
+    var set = document.documentElement.getAttribute("data-theme");
+    if (set) return set === "dark";
+    return window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
+  }
+  var btn = document.querySelector("[data-theme-toggle]");
+  if (!btn) return;
+  function label() {
+    btn.textContent = currentIsDark() ? "☀" : "☾";
+    btn.setAttribute("aria-label", "Toggle theme");
+  }
+  label();
+  btn.addEventListener("click", function () {
+    var next = currentIsDark() ? "light" : "dark";
+    apply(next);
+    try { localStorage.setItem(KEY, next); } catch (e) {}
+    label();
+  });
+})();
+</script>
+</body></html>
