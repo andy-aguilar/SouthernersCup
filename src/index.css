@@ -404,6 +404,54 @@ td:first-child,th:first-child{font-weight:600}
   overflow-wrap:normal;
 }
 
+.numbered-list-block{margin:1.4rem 0 2rem}
+.numbered-list-block > :first-child{margin-top:0}
+.numbered-list{
+  list-style:none;
+  padding:0;
+  margin:1rem 0 0;
+}
+.numbered-list li{
+  display:grid;
+  grid-template-columns:2.45rem minmax(0,1fr);
+  gap:.85rem;
+  padding:.9rem 0;
+  border-bottom:1px solid var(--rule);
+  align-items:baseline;
+}
+.numbered-list li:last-child{border-bottom:0}
+.numbered-list li::before{
+  content:attr(data-number);
+  width:2.1rem;
+  height:2.1rem;
+  display:grid;
+  place-items:center;
+  border-radius:999px;
+  background:color-mix(in srgb,var(--brand) 14%,transparent);
+  color:var(--brand);
+  border:1px solid color-mix(in srgb,var(--brand) 28%,var(--rule));
+  font-size:.9rem;
+  font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+.numbered-list-title{
+  grid-column:2;
+  font-weight:720;
+  color:var(--ink);
+}
+.numbered-list-description,
+.numbered-list-meta{
+  grid-column:2;
+  display:block;
+  color:var(--muted);
+  font-size:.9rem;
+  margin-top:.12rem;
+}
+.numbered-list-meta{
+  color:var(--brand);
+  font-weight:650;
+}
+
 .tag{
   display:inline-block;
   font-size:.7rem;

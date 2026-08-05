@@ -473,7 +473,6 @@ export const pages: Page[] = [
         children: [
           "records-stats",
           "records-table",
-          "records-heading",
           "records-ranks",
         ],
       },
@@ -524,20 +523,23 @@ export const pages: Page[] = [
         props: { title: "Who The Schedule Treated Best", level: "h3" },
       },
       "records-ranks": {
-        type: "RankList",
+        type: "NumberedList",
         props: {
+          title: "Who The Schedule Treated Best",
+          caption:
+            "A generic numbered list block for ranked or ordered editorial callouts.",
           items: [
             {
-              name: "Ramon",
-              detail: "Versus scoring expectation: +6 wins. Clean spacing check.",
+              title: "Ramon",
+              description: "Versus scoring expectation: +6 wins. Clean spacing check.",
             },
             {
-              name: "Stone",
-              detail: "Soft middle stretch, then immediate karmic correction.",
+              title: "Stone",
+              description: "Soft middle stretch, then immediate karmic correction.",
             },
             {
-              name: "Andy",
-              detail: "No comment from the commissioner's office.",
+              title: "Andy",
+              description: "No comment from the commissioner's office.",
             },
           ],
         },

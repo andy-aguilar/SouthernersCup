@@ -360,6 +360,30 @@ export const { registry } = defineRegistry(catalog, {
         ))}
       </ol>
     ),
+    NumberedList: ({ props }) => (
+      <div className="numbered-list-block">
+        {props.title ? <h3>{props.title}</h3> : null}
+        {props.caption ? <p>{props.caption}</p> : null}
+        <ol
+          className="numbered-list"
+        >
+          {props.items.map((item, index) => (
+            <li
+              key={`${item.number ?? props.start ?? 1}-${item.title}-${index}`}
+              data-number={item.number ?? (props.start ?? 1) + index}
+            >
+              <span className="numbered-list-title">{item.title}</span>
+              {item.description ? (
+                <span className="numbered-list-description">
+                  {item.description}
+                </span>
+              ) : null}
+              {item.meta ? <span className="numbered-list-meta">{item.meta}</span> : null}
+            </li>
+          ))}
+        </ol>
+      </div>
+    ),
     CardGrid: ({ props }) => (
       <div className="grid-2" data-columns={props.columns}>
         {props.items.map((item) => (

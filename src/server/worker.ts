@@ -5,6 +5,7 @@ type Env = {
   ASSETS: Fetcher;
   DB: D1Database;
   API_TOKEN?: string;
+  ADMIN_PASSWORD?: string;
 };
 
 type PostRow = {
@@ -112,6 +113,14 @@ function isAuthorized(request: Request, env: Env) {
   return header === `Bearer ${env.API_TOKEN}`;
 }
 
+function canReadNonPublic(request: Request, env: Env) {
+  const adminPassword = env.ADMIN_PASSWORD ?? "tummysticks";
+  return (
+    isAuthorized(request, env) ||
+    request.headers.get("x-admin-password") === adminPassword
+  );
+}
+
 async function readJson(request: Request) {
   const contentType = request.headers.get("content-type") ?? "";
   if (!contentType.includes("application/json")) {
@@ -131,24 +140,40 @@ async function ensureCatalogVersion(env: Env) {
     .run();
 }
 
-function builtInHistoryPost() {
-  const page = pages.find((item) => item.path === "/published/league-history.html");
+function pageStandfirst(page: (typeof pages)[number]) {
+  const root = page.spec.elements[page.spec.root];
+  return typeof root?.props?.standfirst === "string" ? root.props.standfirst : null;
+}
+
+function builtInPost(path: string, slug: string, status: "draft" | "published") {
+  const page = pages.find((item) => item.path === path);
   if (!page) throw new Error("Built-in history article is missing");
 
   return {
-    slug: "league-history",
+    slug,
     title: page.title,
-    subtitle:
-      "Sixteen seasons, two platforms, nine champions, and one dynasty reset. This is how the league became itself.",
-    status: "published" as const,
+    subtitle: pageStandfirst(page),
+    status,
     author: "seed",
     spec: page.spec,
   };
 }
 
+function builtInPosts() {
+  return [
+    {
+      ...builtInPost("/published/league-history.html", "league-history", "published"),
+      subtitle:
+        "Sixteen seasons, two platforms, nine champions, and one dynasty reset. This is how the league became itself.",
+    },
+    builtInPost("/admin/record-book.html", "record-book", "draft"),
+    builtInPost("/admin/feature-requests.html", "feature-requests", "draft"),
+  ];
+}
+
 async function listPosts(request: Request, env: Env) {
   const url = new URL(request.url);
-  const canReadDrafts = isAuthorized(request, env);
+  const canReadDrafts = canReadNonPublic(request, env);
   const status = url.searchParams.get("status");
 
   const rows =
@@ -177,7 +202,7 @@ async function getPost(slug: string, request: Request, env: Env) {
     .first<PostRow>();
 
   if (!row) return notFound();
-  if (row.status !== "published" && !isAuthorized(request, env)) {
+  if (row.status !== "published" && !canReadNonPublic(request, env)) {
     return unauthorized();
   }
 
@@ -290,21 +315,28 @@ async function publishPost(slug: string, request: Request, env: Env) {
 
 async function seedBuiltIns(request: Request, env: Env) {
   if (!isAuthorized(request, env)) return unauthorized();
-  const builtIn = builtInHistoryPost();
+  const posts = [];
 
-  const seedRequest = new Request(request.url, {
-    method: "POST",
-    headers: {
-      "content-type": "application/json",
-      authorization: request.headers.get("authorization") ?? "",
-    },
-    body: JSON.stringify({
-      ...builtIn,
-      note: "Seeded from built-in beta JSON article",
-    }),
-  });
+  for (const builtIn of builtInPosts()) {
+    const seedRequest = new Request(request.url, {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        authorization: request.headers.get("authorization") ?? "",
+      },
+      body: JSON.stringify({
+        ...builtIn,
+        note: "Seeded from built-in beta JSON article",
+      }),
+    });
 
-  return upsertPost(seedRequest, env);
+    const response = await upsertPost(seedRequest, env);
+    if (!response.ok) return response;
+    const payload = (await response.json()) as { post?: unknown };
+    posts.push(payload.post);
+  }
+
+  return json({ posts });
 }
 
 async function listFeatureRequests(env: Env) {

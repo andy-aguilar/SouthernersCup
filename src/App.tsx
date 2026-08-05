@@ -7,6 +7,7 @@ import { registry } from "./json-render/registry";
 const THEME_KEY = "cup-theme";
 const AUTH_KEY = "cup-auth-admin";
 const ADMIN_PASSWORD = "tummysticks";
+const ADMIN_READ_HEADER = "x-admin-password";
 
 type Page = {
   path: string;
@@ -102,7 +103,9 @@ function buildHomePage(posts: PostSummary[]): Page {
   };
 }
 
-function buildAdminPage(): Page {
+function buildAdminPage(draftPosts: PostSummary[]): Page {
+  const hasDrafts = draftPosts.length > 0;
+
   return {
     path: "/admin",
     title: "Commissioner's Office",
@@ -113,27 +116,26 @@ function buildAdminPage(): Page {
           kicker: "Private workspace",
           title: "Commissioner's office",
           standfirst:
-            "Non-published beta documents live here until we migrate them into real post records.",
+            "Draft documents loaded from the content API before they are published.",
         },
-        children: ["admin-documents"],
+        children: [hasDrafts ? "admin-documents" : "admin-empty"],
       },
       "admin-documents": {
-        type: "CardGrid",
+        type: "EntryGrid",
         props: {
-          items: [
-            {
-              label: "Draft",
-              title: "The Record Book",
-              meta: "Not migrated yet",
-              body: "Structured record-table mockup from the JSON Render prototype.",
-            },
-            {
-              label: "Draft",
-              title: "Bot Feature Requests",
-              meta: "Not migrated yet",
-              body: "Mock queue for future renderer blocks requested by the league bot.",
-            },
-          ],
+          label: "Draft posts",
+          entries: draftPosts.map((post) => ({
+            title: post.title,
+            meta: post.subtitle ?? "Draft article",
+            href: `/p/${post.slug}`,
+          })),
+        },
+      },
+      "admin-empty": {
+        type: "Callout",
+        props: {
+          label: "No drafts",
+          body: "There are no draft posts in D1 yet.",
         },
       },
     }),
@@ -147,6 +149,7 @@ export default function App() {
     () => sessionStorage.getItem(AUTH_KEY) === "1",
   );
   const [postIndex, setPostIndex] = useState<PostSummary[]>([]);
+  const [draftPosts, setDraftPosts] = useState<PostSummary[]>([]);
   const [remotePost, setRemotePost] = useState<{
     path: string;
     title: string;
@@ -156,7 +159,7 @@ export default function App() {
 
   const postSlug = slugForPostPath(path);
   const homePage = useMemo(() => buildHomePage(postIndex), [postIndex]);
-  const adminPage = useMemo(() => buildAdminPage(), []);
+  const adminPage = useMemo(() => buildAdminPage(draftPosts), [draftPosts]);
   const page = postSlug
     ? remotePost?.path === path
       ? remotePost
@@ -256,6 +259,36 @@ export default function App() {
   }, []);
 
   useEffect(() => {
+    if (!adminUnlocked) {
+      setDraftPosts([]);
+      return;
+    }
+
+    const controller = new AbortController();
+
+    fetch("/api/posts?status=draft", {
+      headers: {
+        Accept: "application/json",
+        [ADMIN_READ_HEADER]: ADMIN_PASSWORD,
+      },
+      signal: controller.signal,
+    })
+      .then((response) => {
+        if (!response.ok) throw new Error(`Draft index failed: ${response.status}`);
+        return response.json() as Promise<{ posts?: PostSummary[] }>;
+      })
+      .then((payload) => {
+        setDraftPosts(payload.posts ?? []);
+      })
+      .catch((error) => {
+        if (error instanceof DOMException && error.name === "AbortError") return;
+        setDraftPosts([]);
+      });
+
+    return () => controller.abort();
+  }, [adminUnlocked]);
+
+  useEffect(() => {
     if (!postSlug) {
       setRemotePost(null);
       setPostLoading(false);
@@ -267,7 +300,10 @@ export default function App() {
     setRemotePost(null);
 
     fetch(`/api/posts/${postSlug}`, {
-      headers: { Accept: "application/json" },
+      headers: {
+        Accept: "application/json",
+        ...(adminUnlocked ? { [ADMIN_READ_HEADER]: ADMIN_PASSWORD } : {}),
+      },
       signal: controller.signal,
     })
       .then((response) => {
@@ -295,7 +331,7 @@ export default function App() {
       });
 
     return () => controller.abort();
-  }, [path, postSlug]);
+  }, [adminUnlocked, path, postSlug]);
 
   useEffect(() => {
     const id = window.setTimeout(() => {

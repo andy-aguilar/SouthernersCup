@@ -48,6 +48,13 @@ const cardGridItem = z.object({
   meta: z.string().optional(),
 });
 
+const numberedListItem = z.object({
+  number: z.number().optional(),
+  title: z.string(),
+  description: z.string().optional(),
+  meta: z.string().optional(),
+});
+
 const markerItem = z.object({
   label: z.string(),
   initials: z.string(),
@@ -190,6 +197,16 @@ export const catalog = defineCatalog(schema, {
         ),
       }),
       description: "Ranked editorial list.",
+    },
+    NumberedList: {
+      props: z.object({
+        title: z.string().optional(),
+        caption: z.string().optional(),
+        start: z.number().optional(),
+        items: z.array(numberedListItem),
+      }),
+      description:
+        "Generic numbered editorial list with optional item titles, descriptions, and explicit numbers.",
     },
     MarkdownProse: {
       props: z.object({
