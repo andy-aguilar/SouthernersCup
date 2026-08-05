@@ -1,4 +1,5 @@
 import type { Spec } from "@json-render/react";
+import { legacyHistoryHtml } from "./legacyHistoryHtml";
 
 type Page = {
   path: string;
@@ -78,134 +79,9 @@ export const pages: Page[] = [
     title: "The Southerners Cup: A History",
     spec: spec("history", {
       history: {
-        type: "PageHeader",
+        type: "LegacyHtml",
         props: {
-          kicker: "Public archive",
-          title: "The Southerners Cup: A History",
-          standfirst:
-            "A beta remake of the current article, rendered from structured JSON blocks instead of hand-authored HTML.",
-        },
-        children: [
-          "history-byline",
-          "history-stats",
-          "history-intro",
-          "history-era-heading",
-          "history-chart",
-          "history-table",
-          "history-rank-heading",
-          "history-ranks",
-          "history-callout",
-        ],
-      },
-      "history-byline": {
-        type: "Byline",
-        props: {
-          author: "Commissioner's office",
-          date: "2026 beta",
-          tags: ["history", "dynasty", "json"],
-        },
-      },
-      "history-stats": {
-        type: "StatGrid",
-        props: {
-          items: [
-            { label: "Seasons", value: "16", meta: "2010s to now", tone: "gold" },
-            { label: "Platforms", value: "2", meta: "Yahoo and ESPN" },
-            { label: "Format", value: "Dynasty", meta: "starting 2026", tone: "good" },
-          ],
-        },
-      },
-      "history-intro": {
-        type: "Prose",
-        props: {
-          paragraphs: [
-            "The Southerners Cup has always been part fantasy league, part civic institution, and part group text with standings attached.",
-            "This beta page proves the new publishing model: the article structure, tables, charts, callouts, and rankings are all declared as JSON and rendered by site-owned components.",
-          ],
-        },
-      },
-      "history-era-heading": {
-        type: "SectionHeading",
-        props: { title: "The Dynasty Pivot" },
-      },
-      "history-chart": {
-        type: "ChartBars",
-        props: {
-          title: "Mock title ledger",
-          caption:
-            "Temporary sample data. The real backend can replace this with historical league records.",
-          items: [
-            { label: "Stone", value: 4, tone: "gold" },
-            { label: "Andy", value: 3, tone: "brand" },
-            { label: "Ramon", value: 2, tone: "good" },
-            { label: "The Field", value: 7 },
-          ],
-        },
-      },
-      "history-table": {
-        type: "DataTable",
-        props: {
-          title: "Sample era table",
-          columns: [
-            { key: "era", label: "Era" },
-            { key: "format", label: "Format" },
-            { key: "status", label: "Status" },
-            { key: "chaos", label: "Chaos", align: "right" },
-          ],
-          rows: [
-            {
-              era: "Classic",
-              format: "Redraft",
-              status: "Archived",
-              chaos: "+8",
-            },
-            {
-              era: "Transition",
-              format: "Keeper-ish arguments",
-              status: "Under review",
-              chaos: "+12",
-            },
-            {
-              era: "Dynasty",
-              format: "Long-term consequences",
-              status: "Incoming",
-              chaos: "+99",
-            },
-          ],
-        },
-      },
-      "history-rank-heading": {
-        type: "SectionHeading",
-        props: { title: "What This Unlocks", level: "h3" },
-      },
-      "history-ranks": {
-        type: "RankList",
-        props: {
-          items: [
-            {
-              name: "Bot-authored league posts",
-              detail:
-                "The agent can compose from approved rich blocks without touching raw CSS or deploy plumbing.",
-            },
-            {
-              name: "Validated data components",
-              detail:
-                "Tables and charts stay consistent because the renderer owns the markup.",
-            },
-            {
-              name: "Feature requests as content",
-              detail:
-                "When the bot wants a new block, it can write a structured request for us to approve and build.",
-            },
-          ],
-        },
-      },
-      "history-callout": {
-        type: "Callout",
-        props: {
-          label: "Implementation note",
-          tone: "key",
-          body: "This page is not backed by a server yet. The mock content file is standing in for the future API/content store.",
+          html: legacyHistoryHtml,
         },
       },
     }),

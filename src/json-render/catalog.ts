@@ -118,6 +118,13 @@ export const catalog = defineCatalog(schema, {
       }),
       description: "Bot-authored request for a future renderer block.",
     },
+    LegacyHtml: {
+      props: z.object({
+        html: z.string(),
+      }),
+      description:
+        "Migration-only renderer for legacy article HTML stored inside JSON content.",
+    },
   },
   actions: {},
 });

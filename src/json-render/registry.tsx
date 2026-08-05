@@ -170,5 +170,11 @@ export const { registry } = defineRegistry(catalog, {
         </dl>
       </section>
     ),
+    LegacyHtml: ({ props }) => (
+      <div
+        className="legacy-article"
+        dangerouslySetInnerHTML={{ __html: props.html }}
+      />
+    ),
   },
 });

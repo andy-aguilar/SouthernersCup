@@ -86,6 +86,13 @@ export default function App() {
       : "The Southerners Cup";
   }, [page]);
 
+  useEffect(() => {
+    const id = window.setTimeout(() => {
+      initRenderedDocument();
+    }, 0);
+    return () => window.clearTimeout(id);
+  }, [path, page]);
+
   const currentIsDark =
     theme === "dark" ||
     (theme === "system" &&
@@ -147,6 +154,119 @@ export default function App() {
       {locked ? <AdminGate onUnlock={unlock} /> : null}
     </>
   );
+}
+
+function initRenderedDocument() {
+  initTables();
+  initSigns();
+  initToc();
+}
+
+function cellValue(row: HTMLTableRowElement, index: number) {
+  const cell = row.children[index];
+  if (!cell) return { s: "" };
+  const raw = (cell.getAttribute("data-sort") || cell.textContent || "").trim();
+  const record = raw.match(/^(\d+)\s*-\s*(\d+)/);
+  const num = Number.parseFloat(raw.replace(/[$,%\s]/g, "").replace(/^\+/, ""));
+  if (record) {
+    return { n: Number.parseFloat(record[1]) - Number.parseFloat(record[2]) * 0.001, s: raw };
+  }
+  return Number.isNaN(num) || !/\d/.test(raw)
+    ? { s: raw.toLowerCase() }
+    : { n: num, s: raw };
+}
+
+function initTables() {
+  document.querySelectorAll("table").forEach((table) => {
+    if (!table.parentElement?.classList.contains("table-wrap")) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "table-wrap";
+      table.parentNode?.insertBefore(wrapper, table);
+      wrapper.appendChild(table);
+    }
+
+    const head = table.tHead;
+    const body = table.tBodies[0];
+    if (!head || !head.rows.length || !body || body.rows.length < 2) return;
+
+    const headerRow = head.rows[0];
+
+    Array.from(headerRow.cells).forEach((th, index) => {
+      if ((th as HTMLElement).dataset.sortBound) return;
+      (th as HTMLElement).dataset.sortBound = "1";
+      th.setAttribute("data-sortable", "");
+      th.setAttribute("tabindex", "0");
+
+      function sort() {
+        const ascending = th.getAttribute("aria-sort") !== "ascending";
+        Array.from(headerRow.cells).forEach((other) => {
+          other.removeAttribute("aria-sort");
+        });
+        th.setAttribute("aria-sort", ascending ? "ascending" : "descending");
+        Array.from(body.rows)
+          .sort((a, b) => {
+            const x = cellValue(a, index);
+            const y = cellValue(b, index);
+            const result =
+              typeof x.n === "number" && typeof y.n === "number"
+                ? x.n - y.n
+                : String(x.s).localeCompare(String(y.s), undefined, {
+                    numeric: true,
+                  });
+            return ascending ? result : -result;
+          })
+          .forEach((row) => body.appendChild(row));
+      }
+
+      th.addEventListener("click", sort);
+      th.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          sort();
+        }
+      });
+    });
+  });
+}
+
+function initSigns() {
+  document.querySelectorAll("td, .stat .value").forEach((element) => {
+    if (element.querySelector("*")) return;
+    const text = element.textContent?.trim() ?? "";
+    if (/^[+]\d/.test(text)) element.classList.add("pos");
+    else if (/^[-−]\d/.test(text)) element.classList.add("neg");
+  });
+}
+
+function initToc() {
+  document.querySelectorAll("[data-toc]").forEach((host) => {
+    host.textContent = "";
+    const headings = document.querySelectorAll(".wrap h2");
+    if (headings.length < 3) {
+      host.remove();
+      return;
+    }
+    const title = document.createElement("h4");
+    const list = document.createElement("ol");
+    title.textContent = "Contents";
+    headings.forEach((heading, index) => {
+      if (!heading.id) {
+        heading.id = `s${index}-${(heading.textContent || "")
+          .toLowerCase()
+          .replace(/[^a-z0-9]+/g, "-")
+          .replace(/^-|-$/g, "")
+          .slice(0, 40)}`;
+      }
+      const item = document.createElement("li");
+      const link = document.createElement("a");
+      link.href = `#${heading.id}`;
+      link.textContent = heading.textContent;
+      item.appendChild(link);
+      list.appendChild(item);
+    });
+    host.appendChild(title);
+    host.appendChild(list);
+  });
 }
 
 function AdminGate({ onUnlock }: { onUnlock: (password: string) => boolean }) {
