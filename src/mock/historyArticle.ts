@@ -106,6 +106,16 @@ const championInitials: Record<string, string> = {
   "Stephen Chandler": "SC",
 };
 
+function timelineInitials(name: string) {
+  const initials = name
+    .split(/\s+/)
+    .filter(Boolean)
+    .map((part) => part[0])
+    .join("");
+
+  return (initials || name).slice(0, 3).toUpperCase();
+}
+
 export const historyArticleContent = {
   header: {
     kicker: "League history",
@@ -168,7 +178,8 @@ export const historyArticleContent = {
     runnerUp: row[2],
     platform: row[3],
     color: managerColors[row[1]] ?? "#6c757d",
-    initials: championInitials[row[1]] ?? row[1].slice(0, 2).toUpperCase(),
+    initials: championInitials[row[1]] ?? timelineInitials(row[1]),
+    popoverText: `${row[0]}: ${row[1]} defeated ${row[2]}`,
   })),
   careerRows: careerRows.map((row) => ({
     ...row,

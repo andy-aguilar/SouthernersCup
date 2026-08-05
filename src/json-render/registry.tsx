@@ -307,15 +307,18 @@ export const { registry } = defineRegistry(catalog, {
                   className="timeline-node"
                   href={`#season-${season.season}`}
                   key={season.season}
-                  title={`${season.season}: ${season.champion} defeated ${season.runnerUp}`}
+                  aria-label={season.popoverText}
                 >
                   <span
                     className="timeline-dot"
                     style={{ backgroundColor: season.color }}
                   >
-                    {season.initials}
+                    {season.initials.slice(0, 3)}
                   </span>
                   <span className="timeline-year">{season.season}</span>
+                  <span className="timeline-popover" role="tooltip">
+                    {season.popoverText}
+                  </span>
                 </a>
               ))}
             </div>

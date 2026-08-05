@@ -151,6 +151,7 @@ export const catalog = defineCatalog(schema, {
             platform: z.string(),
             color: z.string(),
             initials: z.string(),
+            popoverText: z.string(),
           }),
         ),
         careerRows: z.array(
