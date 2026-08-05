@@ -611,27 +611,24 @@ td:first-child,th:first-child{font-weight:600}
   background:var(--panel-2);
   border:1px solid var(--rule);
   border-radius:999px;
+  display:flex;
+  align-items:center;
   overflow:hidden;
-  position:relative;
 }
 .career-fill{
   display:block;
-  width:var(--wins-pct);
+  flex:0 0 var(--wins-pct);
   height:100%;
   border-radius:inherit;
 }
 .career-wins{
-  position:absolute;
-  top:50%;
-  left:min(calc(var(--wins-pct) + .35rem),calc(100% - 2.15rem));
-  z-index:1;
-  width:2rem;
+  flex:0 0 2rem;
+  margin-left:.35rem;
   color:var(--ink);
   font-size:.62rem;
   font-weight:800;
   line-height:1;
   font-variant-numeric:tabular-nums;
-  transform:translateY(-50%);
 }
 .comparison-page{
   width:min(94vw,96rem);
