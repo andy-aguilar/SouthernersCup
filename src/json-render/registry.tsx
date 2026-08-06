@@ -384,6 +384,31 @@ export const { registry } = defineRegistry(catalog, {
         </ol>
       </div>
     ),
+    BulletList: ({ props }) => (
+      <div className="bullet-list-block">
+        {props.title ? <h3>{props.title}</h3> : null}
+        {props.caption ? <p>{props.caption}</p> : null}
+        <ul className="bullet-list">
+          {props.items.map((item, index) => {
+            const title = typeof item === "string" ? undefined : item.title;
+            const body = typeof item === "string" ? item : item.body;
+
+            return (
+              <li key={`${title ?? body}-${index}`}>
+                {title ? <strong>{title}</strong> : null}
+                <span>{body}</span>
+              </li>
+            );
+          })}
+        </ul>
+      </div>
+    ),
+    QuoteBlock: ({ props }) => (
+      <figure className="quote-block">
+        <blockquote>{props.body}</blockquote>
+        {props.cite ? <figcaption>{props.cite}</figcaption> : null}
+      </figure>
+    ),
     CardGrid: ({ props }) => (
       <div className="grid-2" data-columns={props.columns}>
         {props.items.map((item) => (

@@ -1,5 +1,6 @@
 import { getAgentCatalog, CATALOG_VERSION, validateRenderSpec } from "../json-render/agentCatalog";
 import { pages } from "../mock/content";
+import { draftPostSeeds } from "../mock/draftArticles";
 
 type Env = {
   ASSETS: Fetcher;
@@ -168,6 +169,7 @@ function builtInPosts() {
     },
     builtInPost("/admin/record-book.html", "record-book", "draft"),
     builtInPost("/admin/feature-requests.html", "feature-requests", "draft"),
+    ...draftPostSeeds,
   ];
 }
 

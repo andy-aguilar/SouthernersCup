@@ -55,6 +55,14 @@ const numberedListItem = z.object({
   meta: z.string().optional(),
 });
 
+const bulletListItem = z.union([
+  z.string(),
+  z.object({
+    title: z.string().optional(),
+    body: z.string(),
+  }),
+]);
+
 const markerItem = z.object({
   label: z.string(),
   initials: z.string(),
@@ -207,6 +215,22 @@ export const catalog = defineCatalog(schema, {
       }),
       description:
         "Generic numbered editorial list with optional item titles, descriptions, and explicit numbers.",
+    },
+    BulletList: {
+      props: z.object({
+        title: z.string().optional(),
+        caption: z.string().optional(),
+        items: z.array(bulletListItem),
+      }),
+      description:
+        "Generic bulleted editorial list for requirements, checks, principles, and supporting points.",
+    },
+    QuoteBlock: {
+      props: z.object({
+        body: z.string(),
+        cite: z.string().optional(),
+      }),
+      description: "Pull quote or quoted source text with optional citation.",
     },
     MarkdownProse: {
       props: z.object({
