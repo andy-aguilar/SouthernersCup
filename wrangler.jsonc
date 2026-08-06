@@ -13,6 +13,13 @@
     "run_worker_first": ["/api/*"],
   },
   "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "southernerscup",
+      "database_id": "eb0ef2fc-cc4c-490c-9ec4-d9b8f7720ae0",
+    },
+  ],
   "env": {
     "beta": {
       "name": "southernerscup-beta",
