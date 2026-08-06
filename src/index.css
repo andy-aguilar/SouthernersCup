@@ -127,15 +127,6 @@ p,li{overflow-wrap:anywhere}
   font-weight:800;
 }
 .masthead .spacer{flex:1}
-.beta-pill{
-  border:1px solid var(--rule);
-  border-radius:999px;
-  padding:.16rem .48rem;
-  color:var(--muted);
-  font-size:.68rem;
-  font-weight:750;
-  text-transform:uppercase;
-}
 .iconbtn{
   border:1px solid var(--rule);
   background:var(--panel-2);
@@ -985,7 +976,6 @@ details[open] summary::before{transform:rotate(90deg)}
 
 @media (max-width:520px){
   body{font-size:16px}
-  .beta-pill{display:none}
   .bar-row{grid-template-columns:minmax(0,1fr) 2.5rem}
   .bar-track{grid-column:1 / -1;grid-row:2}
   .career-row{grid-template-columns:minmax(0,1fr)}

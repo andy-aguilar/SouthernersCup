@@ -392,7 +392,6 @@ export default function App() {
             The Southerners Cup
           </a>
           <span className="spacer" />
-          <span className="beta-pill">JSON beta</span>
           <button
             aria-label="Toggle theme"
             className="iconbtn"
