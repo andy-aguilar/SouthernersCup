@@ -1,0 +1,35 @@
+{
+  "$schema": "./node_modules/wrangler/config-schema.json",
+  "name": "southernerscup",
+  "main": "src/server/worker.ts",
+  "compatibility_date": "2026-08-05",
+  "observability": {
+    "enabled": true,
+  },
+  "assets": {
+    "directory": "./dist",
+    "not_found_handling": "single-page-application",
+    "binding": "ASSETS",
+    "run_worker_first": ["/api/*"],
+  },
+  "compatibility_flags": ["nodejs_compat"],
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "southernerscup",
+      "database_id": "eb0ef2fc-cc4c-490c-9ec4-d9b8f7720ae0",
+    },
+  ],
+  "env": {
+    "beta": {
+      "name": "southernerscup-beta",
+      "d1_databases": [
+        {
+          "binding": "DB",
+          "database_name": "southernerscup-beta",
+          "database_id": "cfa989a3-4e7a-4fc0-8ddd-be191e42de36",
+        },
+      ],
+    },
+  },
+}
