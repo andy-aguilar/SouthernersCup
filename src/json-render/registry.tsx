@@ -1,6 +1,7 @@
 import { defineRegistry } from "@json-render/react";
 import type { CSSProperties } from "react";
 import { useMemo, useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { catalog } from "./catalog";
 
 type RichTableCell = string | number | { title: string; description?: string };
@@ -261,15 +262,9 @@ export const { registry } = defineRegistry(catalog, {
       </>
     ),
     MarkdownProse: ({ props }) => (
-      <>
-        {props.markdown
-          .split(/\n{2,}/)
-          .map((paragraph) => paragraph.trim())
-          .filter(Boolean)
-          .map((paragraph) => (
-            <p key={paragraph}>{paragraph}</p>
-          ))}
-      </>
+      <div className="markdown-prose">
+        <ReactMarkdown>{props.markdown}</ReactMarkdown>
+      </div>
     ),
     SectionHeading: ({ props }) =>
       props.level === "h3" ? (
@@ -382,25 +377,6 @@ export const { registry } = defineRegistry(catalog, {
             </li>
           ))}
         </ol>
-      </div>
-    ),
-    BulletList: ({ props }) => (
-      <div className="bullet-list-block">
-        {props.title ? <h3>{props.title}</h3> : null}
-        {props.caption ? <p>{props.caption}</p> : null}
-        <ul className="bullet-list">
-          {props.items.map((item, index) => {
-            const title = typeof item === "string" ? undefined : item.title;
-            const body = typeof item === "string" ? item : item.body;
-
-            return (
-              <li key={`${title ?? body}-${index}`}>
-                {title ? <strong>{title}</strong> : null}
-                <span>{body}</span>
-              </li>
-            );
-          })}
-        </ul>
       </div>
     ),
     QuoteBlock: ({ props }) => (

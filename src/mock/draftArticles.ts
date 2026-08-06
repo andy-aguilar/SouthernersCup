@@ -92,7 +92,16 @@ function bullets(
   title?: string,
   caption?: string,
 ): Element {
-  return { type: "BulletList", props: { title, caption, items } };
+  const heading = title ? `### ${title}\n\n` : "";
+  const deck = caption ? `${caption}\n\n` : "";
+  const list = items
+    .map((item) => {
+      if (typeof item === "string") return `- ${item}`;
+      return item.title ? `- **${item.title}:** ${item.body}` : `- ${item.body}`;
+    })
+    .join("\n");
+
+  return prose(`${heading}${deck}${list}`);
 }
 
 function cards(
@@ -108,6 +117,20 @@ function numbered(
   caption?: string,
 ): Element {
   return { type: "NumberedList", props: { title, caption, items } };
+}
+
+function numberedProse(
+  title: string,
+  items: { title: string; description: string }[],
+): Element {
+  return prose(
+    [
+      `### ${title}`,
+      ...items.map(
+        (item, index) => `${index + 1}. **${item.title}**\n\n   ${item.description}`,
+      ),
+    ].join("\n\n"),
+  );
 }
 
 function table(
@@ -192,31 +215,31 @@ export const draftPostSeeds: DraftPostSeed[] = [
         "constitution-preamble-quote": { type: "QuoteBlock", props: { body: "The Southerners Cup is intended to outlast any one season, one roster, and one commissioner." } },
         "constitution-preamble-prose": prose("Its championship should reward judgment over time: drafting, trading, development, weekly stewardship, and the honest pursuit of victory.\n\nWe therefore establish a dynasty league governed by transparent rules, equal competitive access, durable ownership obligations, and restrained commissioner authority. Every franchise holds its roster in trust for both its present manager and the continued health of the league."),
         "constitution-authority": section("authority-and-membership", "Article I - Authority and membership", ["constitution-authority-list"]),
-        "constitution-authority-list": numbered("Core membership rules", [
+        "constitution-authority-list": numberedProse("Core membership rules", [
           { title: "The governing document", description: "Upon ratification, this constitution governs league play. Sleeper settings implement it but do not silently amend it." },
           { title: "Membership", description: "The league consists of twelve franchises. Managers accept responsibility for dues, roster stewardship, timely lineups, trade integrity, draft participation, and reasonable responsiveness." },
           { title: "Good standing", description: "A franchise is in good standing when current dues are paid and its roster is managed in good faith." },
           { title: "Dues", description: "Annual dues are $50, held by Treasurer Kyle. Any increase requires a two-thirds vote of all franchises." },
         ]),
         "constitution-format": section("format-and-scoring", "Article II - Founding format and scoring", ["constitution-format-list"]),
-        "constitution-format-list": numbered("Format decisions", [
+        "constitution-format-list": numberedProse("Format decisions", [
           { title: "Lineup and rosters", description: "Each franchise holds twenty-six active players and starts 1 QB, 2 RB, 3 WR, 1 TE, 2 FLEX, and 1 SUPERFLEX. No team defense, kicker, IR, or taxi squad." },
           { title: "Scoring", description: "Full PPR with standard fractional yardage. Passing touchdowns are worth four points and interceptions minus two. Tight ends receive no positional premium." },
           { title: "Platform settings", description: "The Commissioner publishes a final settings sheet before the startup draft and certifies that Sleeper matches it." },
         ]),
         "constitution-acquisition": section("player-acquisition", "Article III - Player acquisition and equal access", ["constitution-acquisition-list"]),
-        "constitution-acquisition-list": numbered("Waiver principles", [
+        "constitution-acquisition-list": numberedProse("Waiver principles", [
           { title: "FAAB", description: "Each franchise receives a $100 annual FAAB budget. $0 bids are permitted; FAAB does not carry over." },
           { title: "Periodic processing", description: "Player acquisition should favor equal opportunity over constant attention. Daily offseason FAAB and one weekly in-season waiver run remain the intended structure pending platform review." },
           { title: "Post-draft and offseason waivers", description: "Drafted and dropped players observe at least a two-day waiver period. Offseason windows and reset dates should be published before league year turnover." },
         ]),
         "constitution-lineups": section("lineup-duty", "Article IV - Rosters and lineup duty", ["constitution-lineups-list"]),
-        "constitution-lineups-list": numbered("Roster obligations", [
+        "constitution-lineups-list": numberedProse("Roster obligations", [
           { title: "Legal rosters", description: "Managers may not exceed active roster limits except during a platform-granted grace period." },
           { title: "Weekly obligation", description: "Every franchise must set a complete, legal lineup of active players reasonably expected to play." },
         ]),
         "constitution-integrity": section("competitive-integrity", "Article V - Competitive integrity and anti-tanking", ["constitution-integrity-list"]),
-        "constitution-integrity-list": numbered("Integrity rules", [
+        "constitution-integrity-list": numberedProse("Integrity rules", [
           { title: "Permitted rebuilding", description: "Managers may rebuild aggressively through trades, youth acquisition, and draft capital. A weak roster is not itself tanking." },
           { title: "Prohibited conduct", description: "No intentionally benched superior healthy options, avoidable vacancies, irrational dumps, loaned players, coordinated results, or off-record consideration." },
           { title: "Draft order", description: "Non-playoff rookie draft order follows reverse regular-season standings. Playoff teams select in reverse order of postseason finish." },
@@ -232,7 +255,7 @@ export const draftPostSeeds: DraftPostSeed[] = [
         "constitution-drafts": section("season-playoffs", "Article VIII - Season and playoffs", ["constitution-season-prose"]),
         "constitution-season-prose": prose("The regular season lasts fourteen weeks. Six teams qualify for the playoffs; the top two seeds receive byes, and one-week rounds conclude in Week 17. Week 18 shall never decide the championship. Seeding uses record, then points for.\n\nConsolation games do not alter rookie draft order unless a prize is approved before the season."),
         "constitution-season": section("orphans-and-expansion", "Article IX - Orphans, dispersal, and expansion", ["constitution-orphans-list"]),
-        "constitution-orphans-list": numbered("Franchise continuity", [
+        "constitution-orphans-list": numberedProse("Franchise continuity", [
           { title: "Departing managers", description: "The franchise, roster, picks, FAAB position, paid dues, and liabilities remain intact." },
           { title: "Orphan replacement", description: "The league should seek a qualified replacement on equal terms and disclose all material obligations." },
           { title: "Dispersal", description: "If two or more orphans exist together, a dispersal draft may be approved before recruiting replacements." },
