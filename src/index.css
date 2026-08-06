@@ -302,6 +302,27 @@ h3{
   border-radius:4px;
   padding:.08rem .25rem;
 }
+.article-header > .markdown-prose{
+  margin:1rem 0 1.8rem;
+}
+.article-header > .markdown-prose p{margin:0}
+.article-header > .markdown-prose a{
+  display:inline-flex;
+  align-items:center;
+  min-height:2.35rem;
+  padding:.42rem .72rem;
+  border:1px solid color-mix(in srgb,var(--brand) 30%,var(--rule));
+  border-radius:8px;
+  background:color-mix(in srgb,var(--brand) 10%,transparent);
+  color:var(--brand);
+  font-size:.88rem;
+  font-weight:750;
+  text-decoration:none;
+}
+.article-header > .markdown-prose a:hover{
+  border-color:var(--brand);
+  background:color-mix(in srgb,var(--brand) 15%,transparent);
+}
 
 .table-wrap{
   margin:1.4rem 0 2rem;

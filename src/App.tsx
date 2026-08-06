@@ -78,20 +78,51 @@ function buildHomePage(posts: PostSummary[]): Page {
           standfirst:
             "League history, dynasty documents, and commissioner notes for one long-running fantasy football argument.",
         },
-        children: ["home-callout", "home-entries"],
+        children: ["home-stats", "home-callout", "home-history-link", "home-entries"],
+      },
+      "home-stats": {
+        type: "StatGrid",
+        props: {
+          items: [
+            {
+              label: "Archive",
+              value: "16",
+              meta: "seasons of grudges",
+              tone: "gold",
+            },
+            {
+              label: "Era",
+              value: "Dynasty",
+              meta: "new rules, old beef",
+              tone: "brand",
+            },
+            {
+              label: "Status",
+              value: "Live",
+              meta: "commissioner maintained",
+              tone: "good",
+            },
+          ],
+        },
       },
       "home-callout": {
         type: "Callout",
         props: {
           label: "A new era",
           tone: "key",
-          body: "Welcome to the next chapter. Published posts below are loaded from the content API and rendered through the JSON block registry.",
+          body: "Welcome to the next chapter. As the league moves into dynasty, this archive keeps the champions, records, rivalries, rulings, and bad decisions in one place.",
+        },
+      },
+      "home-history-link": {
+        type: "MarkdownProse",
+        props: {
+          markdown: "[Read the history](/p/league-history)",
         },
       },
       "home-entries": {
         type: "EntryGrid",
         props: {
-          label: "Published posts",
+          label: "Public archive",
           entries: posts.map((post) => ({
             title: post.title,
             meta: post.subtitle ?? "Published article",
